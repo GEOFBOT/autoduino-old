@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
   string temp2 = "";
   istringstream iss;
   vector<int> dist;
-  int comm[6] = {0,0,0,0,0,0};
+  int comm[2] = {0,0};
 
   vector<string> inputs;
   vector<string> outputs;
@@ -51,48 +51,30 @@ int main(int argc, char* argv[]) {
       cout << line << endl;
       for(int i=0;i<6;i++) {
 	getline(iss, temp, ' ');
+	cout << temp << endl;
 	dist.push_back(stoi(temp));
 	//cout << dist[i] << endl;
 	//cout << dist[i] << ' ' << endl;
       }
       again = true;
       while(again) {
-	cout << "Input (frsadc/q): ";
+	cout << "Input (frad/q): ";
 	getline(cin, temp2);
-	cout << temp2;
 	again = false;
 	for(int i=0;i<temp2.size();i++) {
 	  char c = temp2[i];
 	  switch(c) {
 	  case 'f':
 	    comm[0] = 1;
-	    comm[1] = 0;
-	    comm[2] = 0;
 	    break;
 	  case 'r':
-	    comm[0] = 0;
-	    comm[1] = 1;
-	    comm[2] = 0;
-	    break;
-	  case 's':
-	    comm[0] = 0;
-	    comm[1] = 0;
-	    comm[2] = 1;
+	    comm[0] = -1;
 	    break;
 	  case 'a':
-	    comm[3] = 1;
-	    comm[4] = 0;
-	    comm[5] = 0;
+	    comm[1] = 1;
 	    break;
 	  case 'd':
-	    comm[3] = 0;
-	    comm[4] = 1;
-	    comm[5] = 0;
-	    break;
-	  case 'c':
-	    comm[3] = 0;
-	    comm[4] = 0;
-	    comm[5] = 1;
+	    comm[1] = -1;
 	    break;
 	  case 'q':
 	    done = true;
@@ -106,7 +88,7 @@ int main(int argc, char* argv[]) {
       }
       if(!done) {
 	serialPrintf(arduino, temp2.c_str());
-	for(int i=0;i<6;i++) {
+	for(int i=0;i<2;i++) {
 	  oss << comm[i] << ' ';
 	}
 	inputs.push_back(line);
@@ -116,9 +98,12 @@ int main(int argc, char* argv[]) {
 	temp2 = "";
 	dist.clear();
 	iss.str("");
+	iss.clear();
 	oss.str("");
+	oss.clear();
+	comm = {0,0,0,0,0,0};
       } else {
-      data << inputs.size() << " 6 6" << endl;
+      data << inputs.size() << " 6 2" << endl;
       for(int i=0;i<inputs.size();i++) {
 	data << inputs[i] << endl;
 	data << outputs[i] << endl;
