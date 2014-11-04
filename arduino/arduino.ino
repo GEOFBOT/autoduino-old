@@ -33,12 +33,18 @@ void loop() {
   for(int i = 0; i <= 180; i += 45) {
     servo.write(i);
     unsigned int p = head.ping();
-    Serial.print(p / US_ROUNDTRIP_CM);
+    if(p / US_ROUNDTRIP_CM != 0) 
+      Serial.print(p / US_ROUNDTRIP_CM);
+    else
+      Serial.print(MAX_DISTANCE);
     Serial.print(" ");
     delay(1000);
   }
   unsigned int p2 = tail.ping();
-  Serial.println(p2 / US_ROUNDTRIP_CM);
+  if(p2 / US_ROUNDTRIP_CM != 0)
+    Serial.println(p2 / US_ROUNDTRIP_CM);
+  else
+    Serial.println(MAX_DISTANCE);
   steer->run(RELEASE);
   delay(1250);
   drive->run(RELEASE);

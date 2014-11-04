@@ -51,7 +51,6 @@ int main(int argc, char* argv[]) {
       cout << line << endl;
       for(int i=0;i<6;i++) {
 	getline(iss, temp, ' ');
-	cout << temp << endl;
 	dist.push_back(stoi(temp));
 	//cout << dist[i] << endl;
 	//cout << dist[i] << ' ' << endl;
@@ -101,7 +100,8 @@ int main(int argc, char* argv[]) {
 	iss.clear();
 	oss.str("");
 	oss.clear();
-	comm = {0,0,0,0,0,0};
+	comm[0] = 0;
+	comm[1] = 0;
       } else {
       data << inputs.size() << " 6 2" << endl;
       for(int i=0;i<inputs.size();i++) {
