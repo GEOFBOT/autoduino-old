@@ -46,7 +46,7 @@ void loop() {
   else
     Serial.println(MAX_DISTANCE);
   steer->run(RELEASE);
-  delay(1250);
+  delay(250);
   drive->run(RELEASE);
   delay(250);
   while(Serial.available() == 0) {}
