@@ -8,7 +8,7 @@ main:
 	echo TODO
 
 datagen: datagen.cpp
-	$(CC) $(CFLAGS) $(LIBS) datagen.cpp
+	$(CC) $(CFLAGS) $(LIBS) datagen.cpp -o datagen
 
 clean:
 	rm datagen
