@@ -60,6 +60,7 @@ void loop() {
     else
       Serial.print(MAX_DISTANCE);
     Serial.print(" ");
+    delay(1000);
   }
   unsigned int p2 = tail.ping();
   if(p2 / US_ROUNDTRIP_CM != 0)
