@@ -11,7 +11,7 @@ datagen: datagen.cpp
 	$(CC) $(CFLAGS) $(LIBS) datagen.cpp -o datagen
     
 train: train.cpp
-    $(CC) $(CFLAGS) $(LIBS) train.cpp -o train
+	$(CC) $(CFLAGS) $(LIBS) train.cpp -o train
 
 clean:
 	rm datagen train
