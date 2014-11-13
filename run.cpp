@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
       } else if (round(output[2]) == -1) {
         command += "d";
       }    
-      serialPrintf(arduino, command);
+      serialPrintf(arduino, command.c_str());
       line = "";
       temp = "";
       command = "";
@@ -65,6 +65,7 @@ int main(int argc, char* argv[]) {
         dist.clear();
         iss.str();
         iss.clear();
+      }
       }
       }
 }
