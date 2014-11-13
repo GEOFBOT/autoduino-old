@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
       } else if (round(output[2]) == -1) {
         command += "d";
       }
-      cout << round(output[1]) " " << round(output[2])) << endl;
+      cout << round(output[1]) << " " << round(output[2])) << endl;
       serialPrintf(arduino, command.c_str());
       line = "";
       temp = "";
