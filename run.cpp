@@ -1,11 +1,11 @@
-// Not done yet
+#include <cmath>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
 #include <vector>
 #include <wiringSerial.h>
-#include <fann.h>
+#include <floatfann.h>
 
 using namespace std;
 
@@ -23,21 +23,17 @@ int main(int argc, char* argv[]) {
     return -2;
   }
 
+  fann_type *output;
+  fann_type input[6];
+  struct fann *ann = fann_create_from_file(file.c_str());
+  
   string line = "";
   string temp = "";
-  string temp2 = "";
+  string command = "";
   istringstream iss;
   vector<int> dist;
-  int comm[2] = {0,0};
 
-  vector<string> inputs;
-  vector<string> outputs;
-  ostringstream oss;
-
-
-  bool done = false;
-  bool again = true;
-  while(!done) {
+  while(true) {
     char c = serialGetchar(arduino);
     if (c != '\n')
       line += c;
@@ -45,66 +41,29 @@ int main(int argc, char* argv[]) {
       iss.str(line);
       cout << line << endl;
       for(int i=0;i<6;i++) {
-	getline(iss, temp, ' ');
-	dist.push_back(stoi(temp));
-	//cout << dist[i] << endl;
-	//cout << dist[i] << ' ' << endl;
+        getline(iss, temp, ' ');
+        dist.push_back(stoi(temp));
+        input[i] = dist[i];
       }
-      again = true;
-      while(again) {
-	cout << "Input (frad/q): ";
-	getline(cin, temp2);
-	again = false;
-	for(int i=0;i<temp2.size();i++) {
-	  char c = temp2[i];
-	  switch(c) {
-	  case 'f':
-	    comm[0] = 1;
-	    break;
-	  case 'r':
-	    comm[0] = -1;
-	    break;
-	  case 'a':
-	    comm[1] = 1;
-	    break;
-	  case 'd':
-	    comm[1] = -1;
-	    break;
-	  case 'q':
-	    done = true;
-	    break;
-	  default:
-	    cout << "Invalid input, try again!" << endl;
-	    again = true;
-	    break;
-	  }
-	}
+      output = fann_run(ann, input);
+      if(round(output[1]) == 1) {
+        command += "f";
+      } else if (round(output[1]) == -1) {
+        command += "r";
       }
-      if(!done) {
-	serialPrintf(arduino, temp2.c_str());
-	for(int i=0;i<2;i++) {
-	  oss << comm[i] << ' ';
-	}
-	inputs.push_back(line);
-	outputs.push_back(oss.str());
-	line = "";
-	temp = "";
-	temp2 = "";
-	dist.clear();
-	iss.str("");
-	iss.clear();
-	oss.str("");
-	oss.clear();
-	comm[0] = 0;
-	comm[1] = 0;
-      } else {
-      data << inputs.size() << " 6 2" << endl;
-      for(int i=0;i<inputs.size();i++) {
-	data << inputs[i] << endl;
-	data << outputs[i] << endl;
+      if(round(output[2]) == 1) {
+        command += "a";
+      } else if (round(output[2]) == -1) {
+        command += "d";
+      }    
+      serialPrintf(arduino, command);
+      line = "";
+      temp = "";
+      command = "";
+      for(int i=0;i<6;i++) {
+        input[i] = 0;
+        dist.clear();
+        iss.str();
+        iss.clear();
       }
-      data.close();
-      }
-    }
-  }
 }
