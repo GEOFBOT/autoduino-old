@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
   fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
   fann_set_activation_function_output(ann, FANN_SIGMOID_SYMMETRIC);
   
-  fann_train_on_file(ann, data.c_str(), 500000, 1000, 0.001);
+  fann_train_on_file(ann, data.c_str(), 500000, 1000, 0.04);
   fann_save(ann, net.c_str());
   
   fann_destroy(ann);
