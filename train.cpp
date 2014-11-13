@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
   string data = argv[1];
   string net = argv[2];
   
-  struct fann *ann = fann_create_standard(6, 4, 2);
+  struct fann *ann = fann_create_standard(3, 6, 4, 2);
   fann_set_activation_function_hidden(ann, FANN_SIGMOID_SYMMETRIC);
   fann_set_activation_function_output(ann, FANN_SIGMOID_SYMMETRIC);
   
