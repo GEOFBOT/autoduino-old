@@ -1,5 +1,8 @@
 // Fragments from http://hxr99.blogspot.com/2011/12/opencv-examples-camera-capture.html
 #include <opencv2/opencv.hpp>
+#ifdef __LINUX__
+#include <wiringSerial.h>
+#endif
 
 #include <iostream>
 #include <algorithm>
@@ -43,6 +46,14 @@ bool intersection(Point2f o1, Point2f p1, Point2f o2, Point2f p2,
 
 int main(int argc, const char** argv)
 {
+#ifdef __LINUX__
+	arduino = serialOpen("/dev/ttyACM0", 9600);
+	if (!arduino) {
+		cerr << "can't open arduino" << endl;
+		return -1;
+	}
+#endif
+
 	VideoCapture capture(0);
 	Mat frame, ROI, image, edges, edges2, lines;
 	vector<Vec2f> hough;
@@ -53,7 +64,7 @@ int main(int argc, const char** argv)
 
 	if (!capture.isOpened()) cout << "No camera detected" << endl;
 
-#ifdef WIN32
+#ifdef _WIN32
 	namedWindow("result", 1);
 	namedWindow("edge");
 	namedWindow("line");
@@ -199,21 +210,30 @@ int main(int argc, const char** argv)
 				}
 				if ((dir == 0 && tilt == 0) || (dir == 1 && tilt == -1) || (dir == -1 && tilt == 1)) {
 					cout << "Go straight" << endl;
+#ifdef __LINUX__
+					serialPrintf(arduino,"cf");
+#endif
 				}
 				else if ((dir == -1 && tilt == 0) || (dir == 0 && tilt == -1) || (dir == -1 && tilt == -1)) {
 					cout << "Go left" << endl;
+#ifdef __LINUX__
+					serialPrintf(arduino, "af");
+#endif
 				}
 				else if ((dir == 1 && tilt == 0) || (dir == 0 && tilt == 1) || (dir == 1 && tilt == 1)) {
 					cout << "Go right" << endl;
+#ifdef __LINUX__
+					serialPrintf(arduino, "df");
+#endif
 				}
-#ifdef WIN32
+#ifdef _WIN32
 				imshow("result", ROI);
 				imshow("edge", edges2);
 				imshow("line", lines);
 #endif
 			}
 
-#ifdef WIN32
+#ifdef _WIN32
 			if (waitKey(10) >= 0)
 				break;
 #endif
@@ -221,7 +241,7 @@ int main(int argc, const char** argv)
 
 		capture.release();
 
-#ifdef WIN32
+#ifdef _WIN32
 		destroyWindow("result");
 		destroyWindow("edge");
 		destroyWindow("line");
