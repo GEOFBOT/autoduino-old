@@ -234,10 +234,10 @@ int main(int argc, const char** argv)
 #endif
 			}
 
-#ifdef _WIN32
+//#ifdef _WIN32
 			if (waitKey(10) >= 0)
 				break;
-#endif
+//#endif
 		}
 
 		capture.release();

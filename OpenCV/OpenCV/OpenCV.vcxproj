@@ -14,7 +14,7 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{ED51DEB5-7692-49F8-B761-26EB799E1212}</ProjectGuid>
+    <ProjectGuid>{02516DCE-6BDC-4272-9327-D7E752AFA676}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Test</RootNamespace>
     <ProjectName>OpenCV</ProjectName>
