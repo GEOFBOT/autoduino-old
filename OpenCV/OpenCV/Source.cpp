@@ -1,6 +1,6 @@
 // Fragments from http://hxr99.blogspot.com/2011/12/opencv-examples-camera-capture.html
 #include <opencv2/opencv.hpp>
-#ifdef __LINUX__
+#ifdef __arm__
 #include <wiringSerial.h>
 #endif
 
@@ -46,7 +46,7 @@ bool intersection(Point2f o1, Point2f p1, Point2f o2, Point2f p2,
 
 int main(int argc, const char** argv)
 {
-#ifdef __LINUX__
+#ifdef __arm__
 	arduino = serialOpen("/dev/ttyACM0", 9600);
 	if (!arduino) {
 		cerr << "can't open arduino" << endl;
@@ -210,19 +210,19 @@ int main(int argc, const char** argv)
 				}
 				if ((dir == 0 && tilt == 0) || (dir == 1 && tilt == -1) || (dir == -1 && tilt == 1)) {
 					cout << "Go straight" << endl;
-#ifdef __LINUX__
+#ifdef __arm__
 					serialPrintf(arduino,"cf");
 #endif
 				}
 				else if ((dir == -1 && tilt == 0) || (dir == 0 && tilt == -1) || (dir == -1 && tilt == -1)) {
 					cout << "Go left" << endl;
-#ifdef __LINUX__
+#ifdef __arm__
 					serialPrintf(arduino, "af");
 #endif
 				}
 				else if ((dir == 1 && tilt == 0) || (dir == 0 && tilt == 1) || (dir == 1 && tilt == 1)) {
 					cout << "Go right" << endl;
-#ifdef __LINUX__
+#ifdef __arm__
 					serialPrintf(arduino, "df");
 #endif
 				}
