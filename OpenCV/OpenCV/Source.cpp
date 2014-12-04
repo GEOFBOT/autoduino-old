@@ -47,7 +47,7 @@ bool intersection(Point2f o1, Point2f p1, Point2f o2, Point2f p2,
 int main(int argc, const char** argv)
 {
 #ifdef __arm__
-	arduino = serialOpen("/dev/ttyACM0", 9600);
+	int arduino = serialOpen("/dev/ttyACM0", 9600);
 	if (!arduino) {
 		cerr << "can't open arduino" << endl;
 		return -1;
