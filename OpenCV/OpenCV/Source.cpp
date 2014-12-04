@@ -226,6 +226,7 @@ int main(int argc, const char** argv)
 					serialPrintf(arduino, "df");
 #endif
 				}
+				imwrite("lines.png", lines);
 #ifdef _WIN32
 				imshow("result", ROI);
 				imshow("edge", edges2);
