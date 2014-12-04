@@ -14,7 +14,7 @@ train: train.cpp
 	$(CC) $(CFLAGS) $(LIBS) train.cpp -o train
     
 opencv-companion: OpenCV/OpenCV/Source.cpp
-    $(CC) $(CFLAGS) $(LIBS) OpenCV/OpenCV/Source.cpp -o opencv-companion
+	$(CC) $(CFLAGS) $(LIBS) OpenCV/OpenCV/Source.cpp -o opencv-companion
 
 clean:
 	rm datagen train run opencv-companion
