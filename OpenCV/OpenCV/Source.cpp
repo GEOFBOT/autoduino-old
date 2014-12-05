@@ -65,7 +65,7 @@ int main(int argc, const char** argv)
 	if (!capture.isOpened()) cout << "No camera detected" << endl;
 
 #ifdef _WIN32
-	namedWindow("result", 1);
+	namedWindow("result");
 	namedWindow("edge");
 	namedWindow("line");
 #endif
@@ -226,7 +226,7 @@ int main(int argc, const char** argv)
 					serialPrintf(arduino, "df");
 #endif
 				}
-				imwrite("lines.png", lines);
+				imwrite("lines.jpg", lines);
 #ifdef _WIN32
 				imshow("result", ROI);
 				imshow("edge", edges2);
@@ -234,10 +234,8 @@ int main(int argc, const char** argv)
 #endif
 			}
 
-//#ifdef _WIN32
 			if (waitKey(10) >= 0)
 				break;
-//#endif
 		}
 
 		capture.release();
