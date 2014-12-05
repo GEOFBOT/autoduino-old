@@ -74,7 +74,7 @@ int main(int argc, const char** argv)
 		cout << "In capture ..." << endl;
 		for (;;) {
 			linesVec.clear();
-			capture.retrieve(frame);
+			capture >> frame;
 			if (frame.empty())
 				break;
 			else {
