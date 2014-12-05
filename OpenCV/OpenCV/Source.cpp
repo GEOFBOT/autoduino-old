@@ -82,7 +82,7 @@ int main(int argc, const char** argv)
 				ROI = frame(Rect(0, cvRound(frame.rows * 0.6), frame.cols, cvRound(frame.rows * 0.4)));
 				cvtColor(ROI, ROI, COLOR_BGR2GRAY);
 				frame.copyTo(lines);
-                imwrite("lines0.jpg", lines);
+                //imwrite("lines0.jpg", lines);
 				Canny(ROI, edges, threshold1, threshold2);
 				HoughLines(edges, hough, 1, CV_PI / 180, 70);
 				cvtColor(edges, edges2, COLOR_GRAY2BGR);
@@ -227,7 +227,7 @@ int main(int argc, const char** argv)
 					serialPrintf(arduino, "df");
 #endif
 				}
-				imwrite("lines.jpg", lines);
+				//imwrite("lines.jpg", lines);
 #ifdef _WIN32
 				imshow("result", ROI);
 				imshow("edge", edges2);
