@@ -60,7 +60,10 @@ int main(int argc, const char** argv)
 	vector<vector<Vec2f>> linesVec;
 	vector<roadline> roadLines;
 	int threshold1 = 50;
-	int threshold2 = 150;
+	int threshold2 = 225;
+
+	Point p1, p2, p3, p4;
+	roadline left, right;
 
 	if (!capture.isOpened()) cout << "No camera detected" << endl;
 
@@ -79,23 +82,23 @@ int main(int argc, const char** argv)
 				break;
 			else {
 				//cvtColor(frame, ROI, COLOR_BGR2GRAY);
-				ROI = frame(Rect(0, cvRound(frame.rows * 0.6), frame.cols, cvRound(frame.rows * 0.4)));
+				ROI = frame(Rect(0, cvRound(frame.rows * 0.8), frame.cols, cvRound(frame.rows * 0.2)));
 				cvtColor(ROI, ROI, COLOR_BGR2GRAY);
 				frame.copyTo(lines);
                 //imwrite("lines0.jpg", lines);
 				Canny(ROI, edges, threshold1, threshold2);
-				HoughLines(edges, hough, 1, CV_PI / 180, 70);
+				HoughLines(edges, hough, 1, CV_PI / 180, 40);
 				cvtColor(edges, edges2, COLOR_GRAY2BGR);
 				for (int i = 0; i < hough.size(); i++) {
 					float r = hough[i][0], t = hough[i][1];
-					Point p1, p2;
+					Point pt1, pt2;
 					double a = cos(t), o = sin(t);
 					double x0 = r * a, y0 = r * o;
-					p1.x = cvRound(x0 + (1000 * (-o)));
-					p1.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.45);
-					p2.x = cvRound(x0 - (1000 * (-o)));
-					p2.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.45);
-					//line(lines, p1, p2, Scalar(255, 0, 0), 1, LINE_AA);
+					pt1.x = cvRound(x0 + (1000 * (-o)));
+					pt1.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.8);
+					pt2.x = cvRound(x0 - (1000 * (-o)));
+					pt2.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.8);
+					//line(lines, pt1, pt2, Scalar(255, 0, 0), 1, LINE_AA);
 					bool match = false;
 					for (int j = 0; j < linesVec.size(); j++) {
 						float t2 = linesVec[j][0][1];
@@ -137,97 +140,119 @@ int main(int argc, const char** argv)
 					}
 				}
 				sort(roadLines.begin(), roadLines.end(), sortLineByScore());
-				roadline left;
-				left.score = 0;
-				roadline right;
-				right.score = 0;
-				for (int j = 0; j < roadLines.size(); j++) {
-					if (left.score == 0 && (roadLines[j].line[1] < 40 * CV_PI / 180 && roadLines[j].line[1] > 10 * CV_PI / 180)) {
-						left = roadLines[j];
-					}
-					else if (right.score == 0 && (roadLines[j].line[1] < 160 * CV_PI / 180 && roadLines[j].line[1] > 130 * CV_PI / 180)) {
-						right = roadLines[j];
-					}
-				}
-				roadLines.clear();
-				/*for (int j = 0; j < roadLines.size(); j++) {
-					float r = roadLines[j].line[0], t = roadLines[j].line[1];
-					Point p1, p2;
+				if (roadLines.size() >= 2) {
+					left = roadLines[0];
+					right = roadLines[1];
+					roadline temp;
+					float r = left.line[0], t = left.line[1];
+					Point p1, p2, p3, p4;
 					double a = cos(t), o = sin(t);
 					double x0 = r * a, y0 = r * o;
+					int x1 = cvRound(x0 + (1000 * (-o)));
+
+					r = right.line[0];
+					t = right.line[1];
+					a = cos(t);
+					o = sin(t);
+					x0 = r * a;
+					y0 = r * o;
+					int x2 = cvRound(x0 + (1000 * (-o)));
+
+					if (x2 < x1) {
+						temp = left;
+						left = right;
+						right = temp;
+					}
+					/*for (int j = 0; j < roadLines.size(); j++) {
+						if (left.score == 0 && (roadLines[j].line[1] < 40 * CV_PI / 180 && roadLines[j].line[1] > 10 * CV_PI / 180)) {
+						left = roadLines[j];
+						}
+						else if (right.score == 0 && (roadLines[j].line[1] < 160 * CV_PI / 180 && roadLines[j].line[1] > 130 * CV_PI / 180)) {
+						right = roadLines[j];
+						}
+						}*/
+					roadLines.clear();
+				}
+					/*for (int j = 0; j < roadLines.size(); j++) {
+						float r = roadLines[j].line[0], t = roadLines[j].line[1];
+						Point p1, p2;
+						double a = cos(t), o = sin(t);
+						double x0 = r * a, y0 = r * o;
+						p1.x = cvRound(x0 + (1000 * (-o)));
+						p1.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.45);
+						p2.x = cvRound(x0 - (1000 * (-o)));
+						p2.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.45);
+						line(lines, p1, p2, Scalar(0, 0, 255), 2, LINE_AA);
+						}*/
+					float r = left.line[0], t = left.line[1];
+					double a = cos(t), o = sin(t);
+					double x0 = r * a;
+					double y0 = r * o;
 					p1.x = cvRound(x0 + (1000 * (-o)));
-					p1.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.45);
+					p1.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.8);
 					p2.x = cvRound(x0 - (1000 * (-o)));
-					p2.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.45);
+					p2.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.8);
 					line(lines, p1, p2, Scalar(0, 0, 255), 2, LINE_AA);
-				}*/
-				float r = left.line[0], t = left.line[1];
-				Point p1, p2, p3, p4;
-				double a = cos(t), o = sin(t);
-				double x0 = r * a, y0 = r * o;
-				p1.x = cvRound(x0 + (1000 * (-o)));
-				p1.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.6);
-				p2.x = cvRound(x0 - (1000 * (-o)));
-				p2.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.6);
-				line(lines, p1, p2, Scalar(0, 0, 255), 2, LINE_AA);
 
-				r = right.line[0];
-				t = right.line[1];
-				a = cos(t);
-				o = sin(t);
-				x0 = r * a;
-				y0 = r * o;
-				p3.x = cvRound(x0 + (1000 * (-o)));
-				p3.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.6);
-				p4.x = cvRound(x0 - (1000 * (-o)));
-				p4.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.6);
-				line(lines, p3, p4, Scalar(0, 255, 0), 2, LINE_AA);
+					r = right.line[0];
+					t = right.line[1];
+					a = cos(t);
+					o = sin(t);
+					x0 = r * a;
+					y0 = r * o;
+					p3.x = cvRound(x0 + (1000 * (-o)));
+					p3.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.8);
+					p4.x = cvRound(x0 - (1000 * (-o)));
+					p4.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.8);
+					line(lines, p3, p4, Scalar(0, 255, 0), 2, LINE_AA);
 
-				Point2f i1, il, ir;
-				intersection(p1, p2, p3, p4, i1);
-				intersection(p1, p2, Point(0, frame.rows), Point(frame.cols, frame.rows), il);
-				intersection(p3, p4, Point(0, frame.rows), Point(frame.cols, frame.rows), ir);
-				Point center = (il + ir) / 2;
-				line(lines, center, i1, Scalar(255, 0, 0), 1, LINE_AA);
+					Point2f i1, il, ir;
+					intersection(p1, p2, p3, p4, i1);
+					intersection(p1, p2, Point(0, frame.rows), Point(frame.cols, frame.rows), il);
+					intersection(p3, p4, Point(0, frame.rows), Point(frame.cols, frame.rows), ir);
+					Point center = (il + ir) / 2;
+					line(lines, center, i1, Scalar(255, 0, 0), 1, LINE_AA);
 
-				int dir, tilt; // -1 = left, 1 = right, 0 = middle
-				if (center.x < frame.rows * 0.4) {
-					dir = -1;
-				}
-				else if (center.x > frame.rows * 0.6) {
-					dir = 1;
-				}
-				else {
-					dir = 0;
-				}
-				if (i1.x > center.x + frame.rows * 0.1) {
-					tilt = 1;
-				}
-				else if (i1.x < center.x - frame.rows * 0.1) {
-					tilt = -1;
-				}
-				else {
-					tilt = 0;
-				}
-				if ((dir == 0 && tilt == 0) || (dir == 1 && tilt == -1) || (dir == -1 && tilt == 1)) {
-					cout << "Go straight" << endl;
+					int dir, tilt; // -1 = left, 1 = right, 0 = middle
+					if (center.x < frame.rows * 0.4) {
+						dir = -1;
+					}
+					else if (center.x > frame.rows * 0.6) {
+						dir = 1;
+					}
+					else {
+						dir = 0;
+					}
+					if (i1.x > center.x + frame.rows * 0.1) {
+						tilt = 1;
+					}
+					else if (i1.x < center.x - frame.rows * 0.1) {
+						tilt = -1;
+					}
+					else {
+						tilt = 0;
+					}
+					if ((dir == 0 && tilt == 0) || (dir == 1 && tilt == -1) || (dir == -1 && tilt == 1)) {
+						cout << "Go straight" << endl;
 #ifdef __arm__
-					serialPrintf(arduino,"cf");
+						serialPrintf(arduino,"cf");
 #endif
-				}
-				else if ((dir == -1 && tilt == 0) || (dir == 0 && tilt == -1) || (dir == -1 && tilt == -1)) {
-					cout << "Go left" << endl;
+					}
+					else if ((dir == -1 && tilt == 0) || (dir == 0 && tilt == -1) || (dir == -1 && tilt == -1)) {
+						cout << "Go left" << endl;
 #ifdef __arm__
-					serialPrintf(arduino, "af");
+						serialPrintf(arduino, "af");
 #endif
-				}
-				else if ((dir == 1 && tilt == 0) || (dir == 0 && tilt == 1) || (dir == 1 && tilt == 1)) {
-					cout << "Go right" << endl;
+					}
+					else if ((dir == 1 && tilt == 0) || (dir == 0 && tilt == 1) || (dir == 1 && tilt == 1)) {
+						cout << "Go right" << endl;
 #ifdef __arm__
-					serialPrintf(arduino, "df");
+						serialPrintf(arduino, "df");
 #endif
-				}
-				//imwrite("lines.jpg", lines);
+					}
+					//imwrite("lines.jpg", lines);
+
+				
 #ifdef _WIN32
 				imshow("result", ROI);
 				imshow("edge", edges2);
