@@ -62,7 +62,7 @@ int main(int argc, const char** argv)
 	int threshold1 = 50;
 	int threshold2 = 225;
 	int dir, tilt; // -1 = left, 1 = right, 0 = middle
-	int move[2] = { 0, 0 } // [0] drive; [1] turn
+	int move[2] = { 0, 0 }; // [0] drive; [1] turn
 
 	Point p1, p2, p3, p4;
 	roadline left, right;
@@ -185,10 +185,10 @@ int main(int argc, const char** argv)
 						p2.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.3);
 						line(lines, p1, p2, Scalar(0, 0, 255), 2, LINE_AA);
 						}*/
-					float r = left.line[0], t = left.line[1];
-					double a = cos(t), o = sin(t);
-					double x0 = r * a;
-					double y0 = r * o;
+					r = left.line[0], t = left.line[1];
+					a = cos(t), o = sin(t);
+					x0 = r * a;
+					y0 = r * o;
 					p1.x = cvRound(x0 + (1000 * (-o)));
 					p1.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.3);
 					p2.x = cvRound(x0 - (1000 * (-o)));
@@ -258,18 +258,20 @@ int main(int argc, const char** argv)
 					}
 					//imwrite("lines.jpg", lines);
 				}
- else {
+				else {
 #ifdef __arm__
-	 serialPrintf(arduino, "f");
+					serialPrintf(arduino, "f");
 #endif
-	 if (move[1] == -1)
+					if (move[1] == -1) {
 #ifdef __arm__
-		 serialPrintf(arduino, "d");
+						serialPrintf(arduino, "d");
 #endif
-	 else if (move[1] == 1)
+					}
+					else if (move[1] == 1) {
 #ifdef __arm__
-		 serialPrintf(arduino, "a");
+						serialPrintf(arduino, "a");
 #endif
+				}
  }
 
 				
