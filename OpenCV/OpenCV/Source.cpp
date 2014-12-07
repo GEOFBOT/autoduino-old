@@ -61,6 +61,8 @@ int main(int argc, const char** argv)
 	vector<roadline> roadLines;
 	int threshold1 = 50;
 	int threshold2 = 225;
+	int dir, tilt; // -1 = left, 1 = right, 0 = middle
+	int move[2] = { 0, 0 } // [0] drive; [1] turn
 
 	Point p1, p2, p3, p4;
 	roadline left, right;
@@ -172,7 +174,6 @@ int main(int argc, const char** argv)
 						}
 						}*/
 					roadLines.clear();
-				}
 					/*for (int j = 0; j < roadLines.size(); j++) {
 						float r = roadLines[j].line[0], t = roadLines[j].line[1];
 						Point p1, p2;
@@ -213,7 +214,6 @@ int main(int argc, const char** argv)
 					Point center = (il + ir) / 2;
 					line(lines, center, i1, Scalar(255, 0, 0), 1, LINE_AA);
 
-					int dir, tilt; // -1 = left, 1 = right, 0 = middle
 					if (center.x < frame.rows * 0.4) {
 						dir = -1;
 					}
@@ -234,23 +234,43 @@ int main(int argc, const char** argv)
 					}
 					if ((dir == 0 && tilt == 0) || (dir == 1 && tilt == -1) || (dir == -1 && tilt == 1)) {
 						cout << "Go straight" << endl;
+						move[0] = 1;
+						move[1] = 0;
 #ifdef __arm__
 						serialPrintf(arduino,"cf");
 #endif
 					}
 					else if ((dir == -1 && tilt == 0) || (dir == 0 && tilt == -1) || (dir == -1 && tilt == -1)) {
 						cout << "Go left" << endl;
+						move[0] = 1;
+						move[1] = -1;
 #ifdef __arm__
 						serialPrintf(arduino, "af");
 #endif
 					}
 					else if ((dir == 1 && tilt == 0) || (dir == 0 && tilt == 1) || (dir == 1 && tilt == 1)) {
 						cout << "Go right" << endl;
+						move[0] = 1;
+						move[1] = 1;
 #ifdef __arm__
 						serialPrintf(arduino, "df");
 #endif
 					}
 					//imwrite("lines.jpg", lines);
+				}
+ else {
+#ifdef __arm__
+	 serialPrintf(arduino, "f");
+#endif
+	 if (move[1] == -1)
+#ifdef __arm__
+		 serialPrintf(arduino, "d");
+#endif
+	 else if (move[1] == 1)
+#ifdef __arm__
+		 serialPrintf(arduino, "a");
+#endif
+ }
 
 				
 #ifdef _WIN32
