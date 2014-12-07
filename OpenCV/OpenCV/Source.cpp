@@ -63,6 +63,7 @@ int main(int argc, const char** argv)
 	int threshold2 = 225;
 	int dir, tilt; // -1 = left, 1 = right, 0 = middle
 	int move[2] = { 0, 0 }; // [0] drive; [1] turn
+	bool correcting = false;
 
 	Point p1, p2, p3, p4;
 	roadline left, right;
@@ -258,7 +259,8 @@ int main(int argc, const char** argv)
 					}
 					//imwrite("lines.jpg", lines);
 				}
-				else {
+				else if(!correcting) {
+					correcting = true;
 #ifdef __arm__
 					serialPrintf(arduino, "f");
 #endif
