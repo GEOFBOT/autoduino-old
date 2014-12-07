@@ -82,7 +82,7 @@ int main(int argc, const char** argv)
 				break;
 			else {
 				//cvtColor(frame, ROI, COLOR_BGR2GRAY);
-				ROI = frame(Rect(0, cvRound(frame.rows * 0.8), frame.cols, cvRound(frame.rows * 0.2)));
+				ROI = frame(Rect(0, cvRound(frame.rows * 0.3), frame.cols, cvRound(frame.rows * 0.3)));
 				cvtColor(ROI, ROI, COLOR_BGR2GRAY);
 				frame.copyTo(lines);
                 //imwrite("lines0.jpg", lines);
@@ -95,9 +95,9 @@ int main(int argc, const char** argv)
 					double a = cos(t), o = sin(t);
 					double x0 = r * a, y0 = r * o;
 					pt1.x = cvRound(x0 + (1000 * (-o)));
-					pt1.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.8);
+					pt1.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.3);
 					pt2.x = cvRound(x0 - (1000 * (-o)));
-					pt2.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.8);
+					pt2.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.3);
 					//line(lines, pt1, pt2, Scalar(255, 0, 0), 1, LINE_AA);
 					bool match = false;
 					for (int j = 0; j < linesVec.size(); j++) {
@@ -179,9 +179,9 @@ int main(int argc, const char** argv)
 						double a = cos(t), o = sin(t);
 						double x0 = r * a, y0 = r * o;
 						p1.x = cvRound(x0 + (1000 * (-o)));
-						p1.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.45);
+						p1.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.3);
 						p2.x = cvRound(x0 - (1000 * (-o)));
-						p2.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.45);
+						p2.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.3);
 						line(lines, p1, p2, Scalar(0, 0, 255), 2, LINE_AA);
 						}*/
 					float r = left.line[0], t = left.line[1];
@@ -189,9 +189,9 @@ int main(int argc, const char** argv)
 					double x0 = r * a;
 					double y0 = r * o;
 					p1.x = cvRound(x0 + (1000 * (-o)));
-					p1.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.8);
+					p1.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.3);
 					p2.x = cvRound(x0 - (1000 * (-o)));
-					p2.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.8);
+					p2.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.3);
 					line(lines, p1, p2, Scalar(0, 0, 255), 2, LINE_AA);
 
 					r = right.line[0];
@@ -201,9 +201,9 @@ int main(int argc, const char** argv)
 					x0 = r * a;
 					y0 = r * o;
 					p3.x = cvRound(x0 + (1000 * (-o)));
-					p3.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.8);
+					p3.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.3);
 					p4.x = cvRound(x0 - (1000 * (-o)));
-					p4.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.8);
+					p4.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.3);
 					line(lines, p3, p4, Scalar(0, 255, 0), 2, LINE_AA);
 
 					Point2f i1, il, ir;
