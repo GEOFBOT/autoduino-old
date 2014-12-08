@@ -63,7 +63,7 @@ int main(int argc, const char** argv)
 	int threshold2 = 225;
 	int dir, tilt; // -1 = left, 1 = right, 0 = middle
 	int move[2] = { 0, 0 }; // [0] drive; [1] turn
-	bool correcting = false;
+	bool correcting = false;  
 
 	Point p1, p2, p3, p4;
 	roadline left, right;
@@ -144,6 +144,7 @@ int main(int argc, const char** argv)
 				}
 				sort(roadLines.begin(), roadLines.end(), sortLineByScore());
 				if (roadLines.size() >= 2) {
+					correcting = false;
 					left = roadLines[0];
 					right = roadLines[1];
 					roadline temp;
