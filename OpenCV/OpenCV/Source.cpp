@@ -92,10 +92,10 @@ int main(int argc, const char** argv)
 				serialPrintf(arduino, "z");
 				string l = "";
 				char c;
-				while(c != '\n') {
+				while(true) {
 					c = serialGetchar(arduino);
-					if(c == '\n') break;
-					else if(c) l += c;
+					if(c != '\n') l += c;
+					else if (c == '\n') break;
 				}
 				cout << l << endl;
 				distance = stoi(l);
