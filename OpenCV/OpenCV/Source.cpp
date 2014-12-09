@@ -96,6 +96,7 @@ int main(int argc, const char** argv)
 					if(c) l += c;
 					c = serialGetchar(arduino);
 				}
+				cout << l << endl;
 				distance = stoi(l);
 #endif
 
