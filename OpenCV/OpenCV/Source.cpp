@@ -90,9 +90,9 @@ int main(int argc, const char** argv)
 			else {
 #ifdef __arm__
 				serialPrintf(arduino, "z");
-				string line = "";
+				string l = "";
 				while(serialDataAvail(arduino)) {
-					line += serialGetchar(arduino);
+					l += serialGetchar(arduino);
 				}
 				distance = stoi(line);
 #endif
@@ -106,7 +106,7 @@ int main(int argc, const char** argv)
                 //imwrite("lines0.jpg", lines);
 				Canny(ROI, edges, threshold1, threshold2);
 				HoughLines(edges, hough, 1, CV_PI / 180, 40);
-				cvtColor(edges, edges2, COLOR_GRAY2BGR);
+				cvtColor(edges, edges2, COLaOR_GRAY2BGR);
 				for (int i = 0; i < hough.size(); i++) {
 					float r = hough[i][0], t = hough[i][1];
 					Point pt1, pt2;
