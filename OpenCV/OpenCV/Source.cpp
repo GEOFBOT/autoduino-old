@@ -91,8 +91,10 @@ int main(int argc, const char** argv)
 #ifdef __arm__
 				serialPrintf(arduino, "z");
 				string l = "";
-				while(serialDataAvail(arduino)) {
-					l += serialGetchar(arduino);
+				char c;
+				while(c != '\n') {
+					if(c) l += c;
+					c = serialGetchar(arduino);
 				}
 				distance = stoi(l);
 #endif
