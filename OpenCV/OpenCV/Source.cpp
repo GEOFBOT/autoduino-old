@@ -94,7 +94,7 @@ int main(int argc, const char** argv)
 				while(serialDataAvail(arduino)) {
 					l += serialGetchar(arduino);
 				}
-				distance = stoi(line);
+				distance = stoi(l);
 #endif
 
 
