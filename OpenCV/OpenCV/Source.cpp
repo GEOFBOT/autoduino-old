@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <cmath>
 #include <vector>
+#include <string>
 
 using namespace std;
 using namespace cv;
@@ -63,12 +64,11 @@ int main(int argc, const char** argv)
 	int threshold2 = 225;
 	int dir, tilt; // -1 = left, 1 = right, 0 = middle
 	int move[2] = { 0, 0 }; // [0] drive; [1] turn
+	int distance = 0;
 	bool correcting = false;  
 
 	Point p1, p2, p3, p4;
 	roadline left, right;
-
-	if (!capture.isOpened()) cout << "No camera detected" << endl;
 
 #ifdef _WIN32
 	namedWindow("result");
@@ -76,14 +76,28 @@ int main(int argc, const char** argv)
 	namedWindow("line");
 #endif
 
-	if (capture.isOpened()) {
+	if (!capture.isOpened()) cout << "No camera detected" << endl;
+	else {
 		cout << "In capture ..." << endl;
-		for (;;) {
+		bool run = true;
+		while (run) {
 			linesVec.clear();
 			capture >> frame;
-			if (frame.empty())
+			if (frame.empty()) {
+				run = false;
 				break;
+			}
 			else {
+#ifdef __arm__
+				serialPrintf(arduino, "z");
+				string line = "";
+				while(serialDataAvail(arduino))
+					line += serialGetchar(arduino);
+				distance = stoi(line);
+#endif
+
+
+
 				//cvtColor(frame, ROI, COLOR_BGR2GRAY);
 				ROI = frame(Rect(0, cvRound(frame.rows * 0.3), frame.cols, cvRound(frame.rows * 0.3)));
 				cvtColor(ROI, ROI, COLOR_BGR2GRAY);
@@ -144,7 +158,7 @@ int main(int argc, const char** argv)
 				}
 				sort(roadLines.begin(), roadLines.end(), sortLineByScore());
 				if (roadLines.size() >= 2) {
-					correcting = false;
+					correcting = false; 
 					left = roadLines[0];
 					right = roadLines[1];
 					roadline temp;
@@ -234,12 +248,18 @@ int main(int argc, const char** argv)
 					else {
 						tilt = 0;
 					}
+#ifdef __arm__
+					if (distance < 20) {
+						serialPrintf(arduino, "cs");
+						continue;
+					}
+#endif
 					if ((dir == 0 && tilt == 0) || (dir == 1 && tilt == -1) || (dir == -1 && tilt == 1)) {
 						cout << "Go straight" << endl;
 						move[0] = 1;
 						move[1] = 0;
 #ifdef __arm__
-						serialPrintf(arduino,"cf");
+						serialPrintf(arduino, "cf");
 #endif
 					}
 					else if ((dir == -1 && tilt == 0) || (dir == 0 && tilt == -1) || (dir == -1 && tilt == -1)) {
@@ -296,6 +316,11 @@ int main(int argc, const char** argv)
 		destroyWindow("edge");
 		destroyWindow("line");
 #endif
+
+#ifdef __arm__
+		serialClose(arduino);
+#endif
+
 		return 0;
 	}
 }
