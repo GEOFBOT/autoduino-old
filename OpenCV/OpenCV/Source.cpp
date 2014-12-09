@@ -288,6 +288,12 @@ int main(int argc, const char** argv)
 				else if(!correcting) {
 					correcting = true;
 #ifdef __arm__
+					if (distance < 20) {
+						serialPrintf(arduino, "cs");
+						continue;
+					}
+#endif
+#ifdef __arm__
 					serialPrintf(arduino, "f");
 #endif
 					if (move[1] == -1) {
