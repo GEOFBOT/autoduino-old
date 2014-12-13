@@ -84,6 +84,9 @@ int main(int argc, const char** argv)
 		while (run) {
 			linesVec.clear();
             waitKey(500);
+#ifdef __arm__
+            serialPrintf(arduino, "cs");
+#endif
 			capture >> frame;
 			if (frame.empty()) {
 				run = false;
@@ -91,8 +94,7 @@ int main(int argc, const char** argv)
 			}
 			else {
 #ifdef __arm__
-                serialPrintf(arduino, "cs");
-				serialPrintf(arduino, "z");
+                serialPrintf(arduino, "z");
 				string l = "";
 				char c;
 				while(true) {
