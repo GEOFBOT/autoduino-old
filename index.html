@@ -8,7 +8,7 @@
             var img = new Image();
             img.onload = function() {
                 context.drawImage(img, 0, 0);
-                setTimeout("timedRefresh(50)", 50);
+                setTimeout("timedRefresh(500)", 500);
             };
             img.src = "lines.jpg?t=" + new Date().getTime();
         }
