@@ -90,7 +90,7 @@ int main(int argc, const char** argv)
 			}
 			else {
 #ifdef __arm__
-                serialPrintf(arduino, "cs");
+                //serialPrintf(arduino, "cs");
 				serialPrintf(arduino, "z");
 				string l = "";
 				char c;
@@ -269,7 +269,7 @@ int main(int argc, const char** argv)
 						continue;
 					}
 #endif
-					if ((dir == 0 && tilt == 0) || (dir == 1 && tilt == -1) || (dir == -1 && tilt == 1)) {
+					else if ((dir == 0 && tilt == 0) || (dir == 1 && tilt == -1) || (dir == -1 && tilt == 1)) {
 						cout << "Go straight" << endl;
 						move[0] = 1;
 						move[1] = 0;
@@ -293,7 +293,7 @@ int main(int argc, const char** argv)
 						serialPrintf(arduino, "df");
 #endif
 					}
-					//imwrite("lines.jpg", lines);
+					imwrite("../www/lines.jpg", lines);
 				}
                 else if(!correcting && tries < 20) {
                     ++tries;
