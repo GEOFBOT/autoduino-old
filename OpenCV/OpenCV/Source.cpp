@@ -79,11 +79,11 @@ int main(int argc, const char** argv)
 
 	if (!capture.isOpened()) cout << "No camera detected" << endl;
 	else {
-        waitKey(500);
 		cout << "In capture ..." << endl;
 		bool run = true;
 		while (run) {
 			linesVec.clear();
+            waitKey(500);
 			capture >> frame;
 			if (frame.empty()) {
 				run = false;
