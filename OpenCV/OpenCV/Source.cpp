@@ -163,7 +163,8 @@ int main(int argc, const char** argv)
 				}
 				sort(roadLines.begin(), roadLines.end(), sortLineByScore());
 				if (roadLines.size() >= 2) {
-					correcting = false; 
+					correcting = false;
+                    cout << "not correcting" << endl;                    
 					left = roadLines[0];
 					right = roadLines[1];
 					roadline temp;
@@ -287,6 +288,7 @@ int main(int argc, const char** argv)
 				}
 				else if(!correcting) {
 					correcting = true;
+                    cout << "correcting" << endl;
 #ifdef __arm__
 					if (distance < 20) {
 						serialPrintf(arduino, "cs");
