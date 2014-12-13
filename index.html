@@ -2,19 +2,19 @@
 <html>
     <head>
     <script>
-        function timedRefresh(timeoutPeriod) {
+        function timedRefresh() {
             var canvas = document.getElementById('camCvs');
             var context = canvas.getContext('2d');
             var img = new Image();
             img.onload = function() {
                 context.drawImage(img, 0, 0);
-                setTimeout("timedRefresh(50)", timeoutPeriod);
+                setTimeout("timedRefresh(50)", 50);
             };
             img.src = "lines.jpg?t=" + new Date().getTime();
         }
     </script>
     </head>
-    <body onload="JavaScript:timedRefresh(50);">
+    <body onload="JavaScript:timedRefresh();">
         <canvas id="camCvs" width="352" height="288">
     </body>
 </html>

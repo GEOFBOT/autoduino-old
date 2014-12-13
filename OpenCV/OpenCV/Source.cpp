@@ -90,7 +90,7 @@ int main(int argc, const char** argv)
 			}
 			else {
 #ifdef __arm__
-                //serialPrintf(arduino, "cs");
+                serialPrintf(arduino, "cs");
 				serialPrintf(arduino, "z");
 				string l = "";
 				char c;
@@ -101,6 +101,7 @@ int main(int argc, const char** argv)
 				}
 				cout << l << endl;
 				distance = stoi(l);
+                waitKey(500);
 #endif
 
 
