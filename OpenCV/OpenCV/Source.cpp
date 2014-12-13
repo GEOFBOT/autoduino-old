@@ -90,6 +90,7 @@ int main(int argc, const char** argv)
 			}
 			else {
 #ifdef __arm__
+                serialPrintf(arduino, "cs");
 				serialPrintf(arduino, "z");
 				string l = "";
 				char c;
@@ -329,7 +330,7 @@ int main(int argc, const char** argv)
 #endif
 			}
 
-			if (waitKey(10) >= 0)
+			if (waitKey(50) >= 0)
 				break;
 		}
 
