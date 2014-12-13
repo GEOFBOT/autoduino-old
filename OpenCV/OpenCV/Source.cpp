@@ -293,7 +293,6 @@ int main(int argc, const char** argv)
 						serialPrintf(arduino, "df");
 #endif
 					}
-					imwrite("../www/lines.jpg", lines);
 				}
                 else if(!correcting && tries < 20) {
                     ++tries;
@@ -328,9 +327,10 @@ int main(int argc, const char** argv)
 				imshow("edge", edges2);
 				imshow("line", lines);
 #endif
+                imwrite("../www/lines.jpg", lines);
 			}
 
-			if (waitKey(50) >= 0)
+			if (waitKey(100) >= 0)
 				break;
 		}
 
