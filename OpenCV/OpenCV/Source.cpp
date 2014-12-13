@@ -66,6 +66,7 @@ int main(int argc, const char** argv)
 	int move[2] = { 0, 0 }; // [0] drive; [1] turn
 	int distance = 0;
 	bool correcting = false;  
+    int tries = 0;
 
 	Point p1, p2, p3, p4;
 	roadline left, right;
@@ -163,6 +164,7 @@ int main(int argc, const char** argv)
 				}
 				sort(roadLines.begin(), roadLines.end(), sortLineByScore());
 				if (roadLines.size() >= 2) {
+                    tries = 0;
 					correcting = false;
                     cout << "not correcting" << endl;                    
 					left = roadLines[0];
@@ -286,7 +288,10 @@ int main(int argc, const char** argv)
 					}
 					//imwrite("lines.jpg", lines);
 				}
-				else if(!correcting) {
+                else if(!correcting && tries < 20) {
+                    ++tries;
+                }
+				else if(!correcting && tries >= 20) {
 					correcting = true;
                     cout << "correcting" << endl;
 #ifdef __arm__
