@@ -79,6 +79,7 @@ int main(int argc, const char** argv)
 
 	if (!capture.isOpened()) cout << "No camera detected" << endl;
 	else {
+        waitKey(500);
 		cout << "In capture ..." << endl;
 		bool run = true;
 		while (run) {
@@ -101,7 +102,6 @@ int main(int argc, const char** argv)
 				}
 				cout << l << endl;
 				distance = stoi(l);
-                waitKey(500);
 #endif
 
 
