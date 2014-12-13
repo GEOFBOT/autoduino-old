@@ -163,6 +163,12 @@ int main(int argc, const char** argv)
 					}
 				}
 				sort(roadLines.begin(), roadLines.end(), sortLineByScore());
+                if (correcting) {
+                    correcting = false;
+#ifdef __arm__
+						serialPrintf(arduino, "cs");
+#endif                    
+                }
 				if (roadLines.size() >= 2) {
                     tries = 0;
 					correcting = false;
