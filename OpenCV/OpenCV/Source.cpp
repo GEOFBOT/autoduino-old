@@ -114,7 +114,7 @@ int main(int argc, const char** argv)
 				cvtColor(ROI, ROI, COLOR_BGR2GRAY);
 				//equalizeHist(ROI, ROI);
 				//createCLAHE()->apply(ROI, ROI);
-				threshold(ROI, ROI, 127, 255, THRESH_BINARY);
+				threshold(ROI, ROI, 100, 255, THRESH_BINARY);
 				frame.copyTo(lines);
 				//imwrite("lines0.jpg", lines);
 				Canny(ROI, edges, threshold1, threshold2);
@@ -129,7 +129,7 @@ int main(int argc, const char** argv)
 					pt1.y = cvRound(y0 + (1000 * (a)) + frame.rows * 0.3);
 					pt2.x = cvRound(x0 - (1000 * (-o)));
 					pt2.y = cvRound(y0 - (1000 * (a)) + frame.rows * 0.3);
-					//line(lines, pt1, pt2, Scalar(255, 0, 0), 1, LINE_AA);
+					line(lines, pt1, pt2, Scalar(255, 255, 0), 1, LINE_AA);
 					bool match = false;
 					for (int j = 0; j < linesVec.size(); j++) {
 						float t2 = linesVec[j][0][1];
