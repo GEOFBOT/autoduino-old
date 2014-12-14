@@ -96,6 +96,7 @@ int main(int argc, const char** argv)
             }
             else {
                 #ifdef __arm__
+                cout << "ping" << endl;
                 serialPrintf(arduino, "z");
                 string l = "";
                 char c;
