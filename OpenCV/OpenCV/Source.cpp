@@ -168,7 +168,7 @@ int main(int argc, const char** argv)
 					}
 				}
 				sort(roadLines.begin(), roadLines.end(), sortLineByScore());
-				if (roadLines.size() >= 2) {
+				if (roadLines.size() >= 2 && !correcting) {
                     tries = 0;
 					correcting = false;
                     cout << "not correcting" << endl;                    
@@ -245,7 +245,10 @@ int main(int argc, const char** argv)
                     
                     if(prevCenter.x != 0 && prevCenter.y != 0) {
                         int d = sqrt((center.x - prevCenter.x)^2 + (center.y - prevCenter.y)^2);
-                        if(d > 50) correcting = true;
+                        if (d > 50) {
+                            correcting = true;
+                            continue;
+                        }
                     }
 
 					if (center.x < frame.rows * 0.4) {
@@ -304,6 +307,9 @@ int main(int argc, const char** argv)
 				else if(!correcting && tries >= 20) {
 					correcting = true;
                     cout << "correcting" << endl;
+                    tries = 0;
+                }
+                else if (correcting) {
 #ifdef __arm__
 					if (distance < 20) {
 						serialPrintf(arduino, "cs");
@@ -322,6 +328,7 @@ int main(int argc, const char** argv)
 #ifdef __arm__
 						serialPrintf(arduino, "a");
 #endif
+                    }
 				}
  }
 
