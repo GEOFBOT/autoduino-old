@@ -60,7 +60,7 @@ int main(int argc, const char** argv)
 	vector<Vec2f> hough;
 	vector<vector<Vec2f>> linesVec;
 	vector<roadline> roadLines;
-    Point prevCenter = [0,0];
+    Point prevCenter = {0,0};
 	int threshold1 = 50;
 	int threshold2 = 225;
 	int dir, tilt; // -1 = left, 1 = right, 0 = middle
