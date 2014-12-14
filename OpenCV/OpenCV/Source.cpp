@@ -251,10 +251,10 @@ int main(int argc, const char** argv)
 						if (d > 50) correcting = true;
 					}
 
-					if (center.x < frame.rows * 0.4) {
+					if (center.x < frame.rows * 0.3) {
 						dir = -1;
 					}
-					else if (center.x > frame.rows * 0.6) {
+					else if (center.x > frame.rows * 0.7) {
 						dir = 1;
 					}
 					else {
