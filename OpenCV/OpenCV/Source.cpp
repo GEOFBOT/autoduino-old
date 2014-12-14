@@ -337,7 +337,7 @@ int main(int argc, const char** argv)
 				imwrite("../www/lines.jpg", lines);
 			}
 
-			if (waitKey(200) >= 0)
+			if (waitKey(150) >= 0)
 				break;
 		}
 
