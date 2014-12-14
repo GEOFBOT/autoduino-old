@@ -339,9 +339,8 @@ int main(int argc, const char** argv)
             imshow("line", lines);
             #endif
             imwrite("../www/lines.jpg", lines);
+            if (waitKey(100) >= 0) break;
         }
-        
-        if (waitKey(100) >= 0) break;
     }
     
     capture.release();
