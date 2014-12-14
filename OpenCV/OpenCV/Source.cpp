@@ -84,10 +84,10 @@ int main(int argc, const char** argv)
 		bool run = true;
 		while (run) {
 			linesVec.clear();
-			waitKey(500);
 #ifdef __arm__
 			serialPrintf(arduino, "cs");
 #endif
+			waitKey(500);
 			capture >> frame;
 			if (frame.empty()) {
 				run = false;
