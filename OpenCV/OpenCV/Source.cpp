@@ -86,6 +86,7 @@ int main(int argc, const char** argv)
             linesVec.clear();
             waitKey(500);
             #ifdef __arm__
+            cout << "stopping" << endl;
             serialPrintf(arduino, "cs");
             #endif
             capture >> frame;
