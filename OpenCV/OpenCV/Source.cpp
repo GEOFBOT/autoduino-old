@@ -112,6 +112,9 @@ int main(int argc, const char** argv)
 				//cvtColor(frame, ROI, COLOR_BGR2GRAY);
 				ROI = frame(Rect(0, cvRound(frame.rows * 0.3), frame.cols, cvRound(frame.rows * 0.3)));
 				cvtColor(ROI, ROI, COLOR_BGR2GRAY);
+				//equalizeHist(ROI, ROI);
+				//createCLAHE()->apply(ROI, ROI);
+				threshold(ROI, ROI, 127, 255, THRESH_BINARY);
 				frame.copyTo(lines);
 				//imwrite("lines0.jpg", lines);
 				Canny(ROI, edges, threshold1, threshold2);
