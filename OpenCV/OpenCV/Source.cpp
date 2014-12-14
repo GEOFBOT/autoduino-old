@@ -130,7 +130,7 @@ int main(int argc, const char** argv)
 					bool match = false;
 					for (int j = 0; j < linesVec.size(); j++) {
 						float t2 = linesVec[j][0][1];
-						if ((t2 - (3 * CV_PI / 180) < t) && (t < t2 + (3 * CV_PI / 180))) {
+						if ((t2 - (10 * CV_PI / 180) < t) && (t < t2 + (10 * CV_PI / 180))) {
 							linesVec[j].push_back({ r, t });
 							match = true;
 							break;
@@ -272,7 +272,7 @@ int main(int argc, const char** argv)
 						continue;
 					}
 #endif
-					else if ((dir == 0 && tilt == 0) || (dir == 1 && tilt == -1) || (dir == -1 && tilt == 1)) {
+					if ((dir == 0 && tilt == 0) || (dir == 1 && tilt == -1) || (dir == -1 && tilt == 1)) {
 						cout << "Go straight" << endl;
 						move[0] = 1;
 						move[1] = 0;
