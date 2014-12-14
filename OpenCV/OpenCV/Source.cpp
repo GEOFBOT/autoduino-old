@@ -60,6 +60,7 @@ int main(int argc, const char** argv)
 	vector<Vec2f> hough;
 	vector<vector<Vec2f>> linesVec;
 	vector<roadline> roadLines;
+    Point prevCenter = [0,0];
 	int threshold1 = 50;
 	int threshold2 = 225;
 	int dir, tilt; // -1 = left, 1 = right, 0 = middle
@@ -167,12 +168,6 @@ int main(int argc, const char** argv)
 					}
 				}
 				sort(roadLines.begin(), roadLines.end(), sortLineByScore());
-                if (correcting) {
-                    correcting = false;
-#ifdef __arm__
-						serialPrintf(arduino, "cs");
-#endif                    
-                }
 				if (roadLines.size() >= 2) {
                     tries = 0;
 					correcting = false;
@@ -247,6 +242,11 @@ int main(int argc, const char** argv)
 					intersection(p3, p4, Point(0, frame.rows), Point(frame.cols, frame.rows), ir);
 					Point center = (il + ir) / 2;
 					line(lines, center, i1, Scalar(255, 0, 0), 1, LINE_AA);
+                    
+                    if(prevCenter.x != 0 && prevCenter.y != 0) {
+                        int d = sqrt((center.x - prevCenter.x)^2 + (center.y - prevCenter.y)^2);
+                        if(d > 50) correcting = true;
+                    }
 
 					if (center.x < frame.rows * 0.4) {
 						dir = -1;
@@ -296,6 +296,7 @@ int main(int argc, const char** argv)
 						serialPrintf(arduino, "df");
 #endif
 					}
+                    prevCenter = center;
 				}
                 else if(!correcting && tries < 20) {
                     ++tries;
