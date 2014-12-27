@@ -18,13 +18,15 @@ Adafruit_DCMotor *drive = AFMS.getMotor(2);
 
 Servo servo;
 
+int dir[2] = {0, 0};
+
 void setup() {
   Serial.begin(9600);
   
   servo.attach(SERVO);
   AFMS.begin();
   steer->setSpeed(255);
-  drive->setSpeed(90);
+  drive->setSpeed(200);
   steer->run(RELEASE);
   drive->run(RELEASE);
 }
@@ -46,25 +48,43 @@ void loop() {
   while(Serial.available() == 0) {}
   while(Serial.available() > 0) {
     char c = Serial.read();
-    if (c == 'f') {
-      drive->run(FORWARD);
-    } else if (c == 'r') {
-      drive->run(BACKWARD);
-    } else if (c == 'a') {
-      steer->run(FORWARD);
-    } else if (c == 'd') {
-      steer->run(BACKWARD);
-    } else if (c == 's') {
-      drive->run(RELEASE);
-    } else if (c == 'c') {
-      steer->run(RELEASE);
-    } else if (c == 'z') {
-      unsigned int p = head.ping();
-      if(p / US_ROUNDTRIP_CM != 0)
-        Serial.println(p / US_ROUNDTRIP_CM);
-      else
-        Serial.println(MAX_DISTANCE);
+    if (c == 's' || c == 'c') {
+      if (c == 's') {
+        if (dir[0] = 1) drive->run(BACKWARD);
+        else if (dir[0] = -1) drive->run(FORWARD);          
+        delay(25);
+        drive->run(RELEASE);
+        dir[0] = 0;
+      } else if (c == 'c') {
+        if (dir[1] = 1) drive->run(FORWARD);
+        else if (dir[1] = -1) drive->run(BACKWARD);   
+        delay(25);
+        steer->run(RELEASE);
+        dir[1] = 0;
+      }
+      delay(50);
+    }
+    else {
+      if (c == 'f') {
+        drive->run(FORWARD);
+        dir[0] = 1;
+      } else if (c == 'r') {
+        drive->run(BACKWARD);
+        dir[0] = -1;
+      } else if (c == 'a') {
+        steer->run(FORWARD);
+        dir[1] = -1;
+      } else if (c == 'd') {
+        steer->run(BACKWARD);
+        dir[1] = 1;
+      } else if (c == 'z') {
+        unsigned int p = head.ping();
+        if(p / US_ROUNDTRIP_CM != 0)
+          Serial.println(p / US_ROUNDTRIP_CM);
+        else
+          Serial.println(MAX_DISTANCE);
+      }
+      delay(75);
     }
   }
-  delay(75);
 }
