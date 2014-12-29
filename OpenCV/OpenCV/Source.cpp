@@ -63,7 +63,7 @@ int main(int argc, const char** argv)
 	Point prevCenter = { 0, 0 };
 	int threshold1 = 50;
 	int threshold2 = 225;
-	double offsetx = 0, offsety = 0.5;
+	double offsetx = 0, offsety = 0;
 	int dir, tilt; // -1 = left, 1 = right, 0 = middle
 	int move[2] = { 0, 0 }; // [0] drive; [1] turn
 	int distance = 0;
@@ -117,7 +117,7 @@ int main(int argc, const char** argv)
 				cvtColor(ROI, ROI, COLOR_BGR2GRAY);
 				//equalizeHist(ROI, ROI);
 				//createCLAHE()->apply(ROI, ROI);
-				threshold(ROI, ROI, 100, 255, THRESH_BINARY);
+				threshold(ROI, ROI, 80, 255, THRESH_BINARY);
 				frame.copyTo(lines);
 				//imwrite("lines0.jpg", lines);
 				Canny(ROI, edges, threshold1, threshold2);
