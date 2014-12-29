@@ -63,7 +63,7 @@ int main(int argc, const char** argv)
 	Point prevCenter = { 0, 0 };
 	int threshold1 = 50;
 	int threshold2 = 225;
-	double offsetx = 0, offsety = 0;
+	double offsetx = 0, offsety = 0.5;
 	int dir, tilt; // -1 = left, 1 = right, 0 = middle
 	int move[2] = { 0, 0 }; // [0] drive; [1] turn
 	int distance = 0;
