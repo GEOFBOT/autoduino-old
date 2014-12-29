@@ -63,7 +63,7 @@ int main(int argc, const char** argv)
 	Point prevCenter = { 0, 0 };
 	int threshold1 = 50;
 	int threshold2 = 225;
-	double offsetx = 0.2, offsety = 0;
+	double offsetx = 0.05, offsety = 0.7;
 	int dir, tilt; // -1 = left, 1 = right, 0 = middle
 	int move[2] = { 0, 0 }; // [0] drive; [1] turn
 	int distance = 0;
@@ -73,6 +73,7 @@ int main(int argc, const char** argv)
 	Point p1, p2, p3, p4;
 	Point prevl = { 0, -1 }, prevr = { 0, -1 };
 	roadline left, right;
+	Vec2f prevleft = { 0, 0 }, prevright = { 0, 0 };
 
 #ifdef _WIN32
 	namedWindow("result");
@@ -112,7 +113,7 @@ int main(int argc, const char** argv)
 
 
 				//cvtColor(frame, ROI, COLOR_BGR2GRAY);
-				ROI = frame(Rect(cvRound(frame.cols * offsetx), 0, cvRound(frame.cols * (1 - 2 * offsetx)), cvRound(frame.rows)));
+				ROI = frame(Rect(cvRound(frame.cols * offsetx), cvRound(frame.rows * offsety), cvRound(frame.cols * (1 - 2 * offsetx)), cvRound(frame.rows * (1-offsety))));
 				cvtColor(ROI, ROI, COLOR_BGR2GRAY);
 				//equalizeHist(ROI, ROI);
 				//createCLAHE()->apply(ROI, ROI);
@@ -120,7 +121,7 @@ int main(int argc, const char** argv)
 				frame.copyTo(lines);
 				//imwrite("lines0.jpg", lines);
 				Canny(ROI, edges, threshold1, threshold2);
-				HoughLines(edges, hough, 1, CV_PI / 180, 40);
+				HoughLines(edges, hough, 1, CV_PI / 180, 30);
 				cvtColor(edges, edges2, COLOR_GRAY2BGR);
 				for (int i = 0; i < hough.size(); i++) {
 					float r = hough[i][0], t = hough[i][1];
@@ -134,15 +135,18 @@ int main(int argc, const char** argv)
 					line(lines, pt1, pt2, Scalar(255, 255, 0), 1, LINE_AA);
 					bool match = false;
 					for (int j = 0; j < linesVec.size(); j++) {
+						float r2 = linesVec[j][0][0];
 						float t2 = linesVec[j][0][1];
-						if ((t2 - (10 * CV_PI / 180) < t) && (t < t2 + (10 * CV_PI / 180))) {
+						if ((t2 - (5 * CV_PI / 180) < t) && (t < t2 + (5 * CV_PI / 180)) ) {//&& (r2 - 10 < r) && (r < r2 + 10)) {
 							linesVec[j].push_back({ r, t });
 							match = true;
 							break;
 						}
 					}
-					if (!match)
+					if (!match) {
 						linesVec.push_back({ { r, t } });
+						line(lines, pt1, pt2, Scalar(0, 255, 255), 1, LINE_AA);
+					}
 				}
 				for (int i = 0; i < linesVec.size(); i++) {
 					vector<double> sum = { 0, 0 };
