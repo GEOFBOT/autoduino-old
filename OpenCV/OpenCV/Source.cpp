@@ -63,7 +63,7 @@ int main(int argc, const char** argv)
 	Point prevCenter = { 0, 0 };
 	int threshold1 = 50;
 	int threshold2 = 225;
-	double offset = 0;
+	double offsetx = 0.2, offsety = 0;
 	int dir, tilt; // -1 = left, 1 = right, 0 = middle
 	int move[2] = { 0, 0 }; // [0] drive; [1] turn
 	int distance = 0;
@@ -112,8 +112,7 @@ int main(int argc, const char** argv)
 
 
 				//cvtColor(frame, ROI, COLOR_BGR2GRAY);
-				//ROI = frame(Rect(0, cvRound(frame.rows * offset), frame.cols, cvRound(frame.rows * offset)));
-				frame.copyTo(ROI);
+				ROI = frame(Rect(cvRound(frame.cols * offsetx), 0, cvRound(frame.cols - 2 * offsetx), cvRound(frame.rows)));
 				cvtColor(ROI, ROI, COLOR_BGR2GRAY);
 				//equalizeHist(ROI, ROI);
 				//createCLAHE()->apply(ROI, ROI);
@@ -128,10 +127,10 @@ int main(int argc, const char** argv)
 					Point pt1, pt2;
 					double a = cos(t), o = sin(t);
 					double x0 = r * a, y0 = r * o;
-					pt1.x = cvRound(x0 + (1000 * (-o)));
-					pt1.y = cvRound(y0 + (1000 * (a)) + frame.rows * offset);
-					pt2.x = cvRound(x0 - (1000 * (-o)));
-					pt2.y = cvRound(y0 - (1000 * (a)) + frame.rows * offset);
+					pt1.x = cvRound(x0 + (1000 * (-o)) + frame.rows * offsetx);
+					pt1.y = cvRound(y0 + (1000 * (a)) + frame.rows * offsety);
+					pt2.x = cvRound(x0 - (1000 * (-o)) + frame.rows * offsetx);
+					pt2.y = cvRound(y0 - (1000 * (a)) + frame.rows * offsety);
 					line(lines, pt1, pt2, Scalar(255, 255, 0), 1, LINE_AA);
 					bool match = false;
 					for (int j = 0; j < linesVec.size(); j++) {
@@ -215,19 +214,19 @@ int main(int argc, const char** argv)
 					double a = cos(t), o = sin(t);
 					double x0 = r * a, y0 = r * o;
 					p1.x = cvRound(x0 + (1000 * (-o)));
-					p1.y = cvRound(y0 + (1000 * (a)) + frame.rows * offset);
+					p1.y = cvRound(y0 + (1000 * (a)) + frame.rows * offsety);
 					p2.x = cvRound(x0 - (1000 * (-o)));
-					p2.y = cvRound(y0 - (1000 * (a)) + frame.rows * offset);
+					p2.y = cvRound(y0 - (1000 * (a)) + frame.rows * offsety);
 					line(lines, p1, p2, Scalar(0, 0, 255), 2, LINE_AA);
 					}*/
 					r = left.line[0], t = left.line[1];
 					a = cos(t), o = sin(t);
 					x0 = r * a;
 					y0 = r * o;
-					p1.x = cvRound(x0 + (1000 * (-o)));
-					p1.y = cvRound(y0 + (1000 * (a)) + frame.rows * offset);
-					p2.x = cvRound(x0 - (1000 * (-o)));
-					p2.y = cvRound(y0 - (1000 * (a)) + frame.rows * offset);
+					p1.x = cvRound(x0 + (1000 * (-o)) + frame.rows * offsetx);
+					p1.y = cvRound(y0 + (1000 * (a)) + frame.rows * offsety);
+					p2.x = cvRound(x0 - (1000 * (-o)) + frame.rows * offsetx);
+					p2.y = cvRound(y0 - (1000 * (a)) + frame.rows * offsety);
 					line(lines, p1, p2, Scalar(0, 0, 255), 2, LINE_AA);
 
 					r = right.line[0];
@@ -236,10 +235,10 @@ int main(int argc, const char** argv)
 					o = sin(t);
 					x0 = r * a;
 					y0 = r * o;
-					p3.x = cvRound(x0 + (1000 * (-o)));
-					p3.y = cvRound(y0 + (1000 * (a)) + frame.rows * offset);
-					p4.x = cvRound(x0 - (1000 * (-o)));
-					p4.y = cvRound(y0 - (1000 * (a)) + frame.rows * offset);
+					p3.x = cvRound(x0 + (1000 * (-o)) + frame.rows * offsetx);
+					p3.y = cvRound(y0 + (1000 * (a)) + frame.rows * offsety);
+					p4.x = cvRound(x0 - (1000 * (-o)) + frame.rows * offsetx);
+					p4.y = cvRound(y0 - (1000 * (a)) + frame.rows * offsety);
 					line(lines, p3, p4, Scalar(0, 255, 0), 2, LINE_AA);
 
 					Point2f i1, il, ir;
@@ -259,7 +258,7 @@ int main(int argc, const char** argv)
 						if (d > 50) correcting = true;
 					}
 
-					if (center.x < frame.rows * offset) {
+					if (center.x < frame.rows * 0.3) {
 						dir = -1;
 					}
 					else if (center.x > frame.rows * 0.7) {
