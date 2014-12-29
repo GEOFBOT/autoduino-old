@@ -26,7 +26,7 @@ void setup() {
   servo.attach(SERVO);
   AFMS.begin();
   steer->setSpeed(255);
-  drive->setSpeed(200);
+  drive->setSpeed(100);
   steer->run(RELEASE);
   drive->run(RELEASE);
 }

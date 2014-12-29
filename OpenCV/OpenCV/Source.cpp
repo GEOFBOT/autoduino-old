@@ -127,9 +127,9 @@ int main(int argc, const char** argv)
 					Point pt1, pt2;
 					double a = cos(t), o = sin(t);
 					double x0 = r * a, y0 = r * o;
-					pt1.x = cvRound(x0 + (1000 * (-o)) + frame.rows * offsetx);
+					pt1.x = cvRound(x0 + (1000 * (-o)) + frame.cols * offsetx);
 					pt1.y = cvRound(y0 + (1000 * (a)) + frame.rows * offsety);
-					pt2.x = cvRound(x0 - (1000 * (-o)) + frame.rows * offsetx);
+					pt2.x = cvRound(x0 - (1000 * (-o)) + frame.cols * offsetx);
 					pt2.y = cvRound(y0 - (1000 * (a)) + frame.rows * offsety);
 					line(lines, pt1, pt2, Scalar(255, 255, 0), 1, LINE_AA);
 					bool match = false;
@@ -223,9 +223,9 @@ int main(int argc, const char** argv)
 					a = cos(t), o = sin(t);
 					x0 = r * a;
 					y0 = r * o;
-					p1.x = cvRound(x0 + (1000 * (-o)) + frame.rows * offsetx);
+					p1.x = cvRound(x0 + (1000 * (-o)) + frame.cols * offsetx);
 					p1.y = cvRound(y0 + (1000 * (a)) + frame.rows * offsety);
-					p2.x = cvRound(x0 - (1000 * (-o)) + frame.rows * offsetx);
+					p2.x = cvRound(x0 - (1000 * (-o)) + frame.cols * offsetx);
 					p2.y = cvRound(y0 - (1000 * (a)) + frame.rows * offsety);
 					line(lines, p1, p2, Scalar(0, 0, 255), 2, LINE_AA);
 
@@ -235,9 +235,9 @@ int main(int argc, const char** argv)
 					o = sin(t);
 					x0 = r * a;
 					y0 = r * o;
-					p3.x = cvRound(x0 + (1000 * (-o)) + frame.rows * offsetx);
+					p3.x = cvRound(x0 + (1000 * (-o)) + frame.cols * offsetx);
 					p3.y = cvRound(y0 + (1000 * (a)) + frame.rows * offsety);
-					p4.x = cvRound(x0 - (1000 * (-o)) + frame.rows * offsetx);
+					p4.x = cvRound(x0 - (1000 * (-o)) + frame.cols * offsetx);
 					p4.y = cvRound(y0 - (1000 * (a)) + frame.rows * offsety);
 					line(lines, p3, p4, Scalar(0, 255, 0), 2, LINE_AA);
 
