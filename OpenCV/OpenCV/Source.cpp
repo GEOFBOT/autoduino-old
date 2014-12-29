@@ -71,6 +71,7 @@ int main(int argc, const char** argv)
 	int tries = 0;
 
 	Point p1, p2, p3, p4;
+	Point prevl = { 0, -1 }, prevr = { 0, -1 };
 	roadline left, right;
 
 #ifdef _WIN32
@@ -247,6 +248,11 @@ int main(int argc, const char** argv)
 					intersection(p3, p4, Point(0, frame.rows), Point(frame.cols, frame.rows), ir);
 					Point center = (il + ir) / 2;
 					line(lines, center, i1, Scalar(255, 0, 0), 1, LINE_AA);
+					if ((prevl.y == -1 && prevr.y == -1) || ((il.x > prevl.x - 0.2 * frame.cols || il.x < prevl.x + 0.2 * frame.cols) && (ir.x > prevr.x - 0.2 * frame.cols || ir.x < prevr.x + 0.2 * frame.cols))) {
+						prevl = il;
+						prevr = ir;
+					}
+					else break;
 
 					if (prevCenter.x != 0 && prevCenter.y != 0) {
 						int d = sqrt((center.x - prevCenter.x) ^ 2 + (center.y - prevCenter.y) ^ 2);
