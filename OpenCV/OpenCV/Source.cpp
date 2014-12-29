@@ -112,7 +112,7 @@ int main(int argc, const char** argv)
 
 
 				//cvtColor(frame, ROI, COLOR_BGR2GRAY);
-				ROI = frame(Rect(cvRound(frame.cols * offsetx), 0, cvRound(frame.cols - 2 * offsetx), cvRound(frame.rows)));
+				ROI = frame(Rect(cvRound(frame.cols * offsetx), 0, cvRound(frame.cols * (1 - 2 * offsetx)), cvRound(frame.rows)));
 				cvtColor(ROI, ROI, COLOR_BGR2GRAY);
 				//equalizeHist(ROI, ROI);
 				//createCLAHE()->apply(ROI, ROI);
