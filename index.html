@@ -9,9 +9,9 @@
             var img = new Image();
             img.onload = function() {
                 context.drawImage(img, 0, 0);
-                setTimeout("timedRefresh(500)", 500);
+                setTimeout("timedRefresh(1000)", 1000);
             };
-            img.src = "lines.jpg?t=" + new Date().getTime();
+            img.src = "lines.png?t=" + new Date().getTime();
         }
     </script>
     </head>
