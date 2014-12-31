@@ -56,7 +56,6 @@ int main(int argc, const char** argv)
 #endif
 
 	VideoCapture capture(0);
-	VideoWriter outStream;
 	Mat frame, ROI, image, edges, edges2, lines;
 	vector<Vec2f> hough;
 	vector<vector<Vec2f>> linesVec;
@@ -82,9 +81,9 @@ int main(int argc, const char** argv)
 	namedWindow("line");
 #endif
 
-	if (!capture.isOpened()) {}//cout << "No camera detected" << endl;
+	if (!capture.isOpened()) cout << "No camera detected" << endl;
 	else {
-	  //cout << "In capture ..." << endl;
+		cout << "In capture ..." << endl;
 		bool run = true;
 		while (run) {
 			linesVec.clear();
@@ -107,16 +106,11 @@ int main(int argc, const char** argv)
 					if (c != '\n') l += c;
 					else if (c == '\n') break;
 				}
-				//cout << l << endl;
+				cout << l << endl;
 				distance = stoi(l);
 #endif
 
-				if(!outStream.isOpened()) {
-				  int codec = VideoWriter::fourcc('M','J','P','G');
-				  //cout << "Frame size: " << frame.cols << " " << frame.rows << endl;
-				  //cout << "Opening output stream..." << codec << "  " <<
-				  outStream.open("out.mjpg", codec, 2, Size(frame.cols,frame.rows), true);
-				}
+
 
 				//cvtColor(frame, ROI, COLOR_BGR2GRAY);
 				ROI = frame(Rect(cvRound(frame.cols * offsetx), cvRound(frame.rows * offsety), cvRound(frame.cols * (1 - 2 * offsetx)), cvRound(frame.rows * (1-offsety))));
@@ -186,7 +180,7 @@ int main(int argc, const char** argv)
 				if (roadLines.size() >= 2) {
 					tries = 0;
 					correcting = false;
-					//cout << "not correcting" << endl;
+					cout << "not correcting" << endl;
 					left = roadLines[0];
 					right = roadLines[1];
 					roadline temp;
@@ -293,7 +287,7 @@ int main(int argc, const char** argv)
 					}
 #endif
 					if ((dir == 0 && tilt == 0) || (dir == 1 && tilt == -1) || (dir == -1 && tilt == 1)) {
-					  //	cout << "Go straight" << endl;
+						cout << "Go straight" << endl;
 						move[0] = 1;
 						move[1] = 0;
 #ifdef __arm__
@@ -301,7 +295,7 @@ int main(int argc, const char** argv)
 #endif
 					}
 					else if ((dir == -1 && tilt == 0) || (dir == 0 && tilt == -1) || (dir == -1 && tilt == -1)) {
-					  //	cout << "Go left" << endl;
+						cout << "Go left" << endl;
 						move[0] = 1;
 						move[1] = -1;
 #ifdef __arm__
@@ -309,7 +303,7 @@ int main(int argc, const char** argv)
 #endif
 					}
 					else if ((dir == 1 && tilt == 0) || (dir == 0 && tilt == 1) || (dir == 1 && tilt == 1)) {
-					  //	cout << "Go right" << endl;
+						cout << "Go right" << endl;
 						move[0] = 1;
 						move[1] = 1;
 #ifdef __arm__
@@ -323,7 +317,7 @@ int main(int argc, const char** argv)
 				}
 				else if (!correcting && tries >= 20) {
 					correcting = true;
-					//cout << "correcting" << endl;
+					cout << "correcting" << endl;
 #ifdef __arm__
 					if (distance < 20) {
 						serialPrintf(arduino, "cs");
@@ -331,16 +325,16 @@ int main(int argc, const char** argv)
 					}
 #endif
 #ifdef __arm__
-					serialPrintf(arduino, "r");
+					serialPrintf(arduino, "f");
 #endif
 					if (move[1] == -1) {
 #ifdef __arm__
-					  //						serialPrintf(arduino, "d");
+						serialPrintf(arduino, "d");
 #endif
 					}
 					else if (move[1] == 1) {
 #ifdef __arm__
-					  //	serialPrintf(arduino, "a");
+						serialPrintf(arduino, "a");
 #endif
 					}
 				}
@@ -351,11 +345,7 @@ int main(int argc, const char** argv)
 				imshow("edge", edges2);
 				imshow("line", lines);
 #endif
-
-				imwrite("/home/geoffreymon/www/lines.png", lines);
-				imwrite("/home/geoffreymon/mjpg/out.jpg", lines);
-				outStream << lines;
-				//cout << lines;
+				imwrite("../www/lines.jpg", lines);
 			}
 
 			if (waitKey(150) >= 0)
