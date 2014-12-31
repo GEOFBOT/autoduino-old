@@ -123,7 +123,7 @@ int main(int argc, const char** argv)
 				cvtColor(ROI, ROI, COLOR_BGR2GRAY);
 				//equalizeHist(ROI, ROI);
 				//createCLAHE()->apply(ROI, ROI);
-				threshold(ROI, ROI, 80, 255, THRESH_BINARY);
+				threshold(ROI, ROI, 100, 255, THRESH_BINARY);
 				frame.copyTo(lines);
 				//imwrite("lines0.jpg", lines);
 				Canny(ROI, edges, threshold1, threshold2);
