@@ -143,7 +143,7 @@ int main(int argc, const char** argv)
 					for (int j = 0; j < linesVec.size(); j++) {
 						float r2 = linesVec[j][0][0];
 						float t2 = linesVec[j][0][1];
-						if ((t2 - (10 * CV_PI / 180) < t) && (t < t2 + (10 * CV_PI / 180)) ) {//&& (r2 - 10 < r) && (r < r2 + 10)) {
+						if ((t2 - (18 * CV_PI / 180) < t) && (t < t2 + (18 * CV_PI / 180)) ) {//&& (r2 - 10 < r) && (r < r2 + 10)) {
 							linesVec[j].push_back({ r, t });
 							match = true;
 							break;
@@ -171,7 +171,7 @@ int main(int argc, const char** argv)
 						roadLines.push_back(l);
 					}
 					for (int j = 0; j < roadLines.size(); j++) {
-						if (t < roadLines[j].line[1] + (6 * CV_PI / 180) && t > roadLines[j].line[1] - (6 * CV_PI / 180)) {
+						if (t < roadLines[j].line[1] + (10 * CV_PI / 180) && t > roadLines[j].line[1] - (10 * CV_PI / 180)) {
 							++roadLines[j].score;
 						}
 						else if (!(((t < (10 * CV_PI / 180)) && (t > 170 * CV_PI / 180)) || ((t > 80 * CV_PI / 180) && (t < 100 * CV_PI / 180)))) {
