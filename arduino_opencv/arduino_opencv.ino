@@ -26,12 +26,13 @@ void setup() {
   servo.attach(SERVO);
   AFMS.begin();
   steer->setSpeed(255);
-  drive->setSpeed(140);
+  drive->setSpeed(160);
   steer->run(RELEASE);
   drive->run(RELEASE);
 }
 
 void loop() {
+  delay(50);
   /*for(int i = 0; i <= 180; i += 45) {
     servo.write(i);
     unsigned int p = head.ping();
@@ -62,7 +63,6 @@ void loop() {
         steer->run(RELEASE);
         dir[1] = 0;
       }
-      delay(50);
     }
     else {
       if (c == 'f') {
@@ -84,7 +84,7 @@ void loop() {
         else
           Serial.println(MAX_DISTANCE);
       }
-      delay(75);
+      delay(25);
     }
   }
 }
