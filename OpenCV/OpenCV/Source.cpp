@@ -358,7 +358,7 @@ int main(int argc, const char** argv)
 				//cout << lines;
 			}
 
-			if (waitKey(150) >= 0)
+			if (waitKey(75) >= 0)
 				break;
 		}
 
