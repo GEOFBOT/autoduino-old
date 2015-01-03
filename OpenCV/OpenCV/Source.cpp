@@ -89,7 +89,7 @@ int main(int argc, const char** argv)
 		while (run) {
 			linesVec.clear();
 #ifdef __arm__
-			//serialPrintf(arduino, "cs");
+			serialPrintf(arduino, "cs");
 #endif
 			waitKey(500);
 			capture >> frame;
