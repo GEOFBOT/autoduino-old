@@ -89,7 +89,7 @@ int main(int argc, const char** argv)
 		while (run) {
 			linesVec.clear();
 #ifdef __arm__
-			serialPrintf(arduino, "cs");
+			//serialPrintf(arduino, "cs");
 #endif
 			waitKey(500);
 			capture >> frame;
@@ -264,14 +264,14 @@ int main(int argc, const char** argv)
 					else break;
 
 					if (prevCenter.x != 0 && prevCenter.y != 0) {
-						int d = sqrt((center.x - prevCenter.x) ^ 2 + (center.y - prevCenter.y) ^ 2);
+						double d = sqrt((center.x - prevCenter.x) ^ 2 + (center.y - prevCenter.y) ^ 2);
 						if (d > 50) correcting = true;
 					}
 
-					if (center.x < frame.rows * 0.3) {
+					if (center.x < frame.rows * 0.4) {
 						dir = -1;
 					}
-					else if (center.x > frame.rows * 0.7) {
+					else if (center.x > frame.rows * 0.6) {
 						dir = 1;
 					}
 					else {
@@ -293,7 +293,7 @@ int main(int argc, const char** argv)
 					}
 #endif
 					if ((dir == 0 && tilt == 0) || (dir == 1 && tilt == -1) || (dir == -1 && tilt == 1)) {
-					  //	cout << "Go straight" << endl;
+					  	cout << "Go straight" << endl;
 						move[0] = 1;
 						move[1] = 0;
 #ifdef __arm__
@@ -301,7 +301,7 @@ int main(int argc, const char** argv)
 #endif
 					}
 					else if ((dir == -1 && tilt == 0) || (dir == 0 && tilt == -1) || (dir == -1 && tilt == -1)) {
-					  //	cout << "Go left" << endl;
+					  	cout << "Go left" << endl;
 						move[0] = 1;
 						move[1] = -1;
 #ifdef __arm__
@@ -309,7 +309,7 @@ int main(int argc, const char** argv)
 #endif
 					}
 					else if ((dir == 1 && tilt == 0) || (dir == 0 && tilt == 1) || (dir == 1 && tilt == 1)) {
-					  //	cout << "Go right" << endl;
+					  	cout << "Go right" << endl;
 						move[0] = 1;
 						move[1] = 1;
 #ifdef __arm__
