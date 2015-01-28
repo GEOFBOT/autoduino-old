@@ -28,6 +28,7 @@
 #include <cmath>
 #include <vector>
 #include <string>
+#include <fstream>
 
 #include <opencv2/opencv.hpp>
 #ifdef __arm__
@@ -174,6 +175,23 @@ int main()
 	int diff_r = 100;
 
 	while (run) {
+		// Check ultrasound distance sensor first!
+#ifdef __arm__
+		serialPrintf(arduino, "z");
+		string l = "";
+		char c;
+		while (true) {
+			c = serialGetchar(arduino);
+			if (c != '\n') l += c;
+			else if (c == '\n') break;
+		}
+		distance = stoi(l);
+		if (distance < 20) {
+			serialPrintf(arduino, "cs");
+			continue;
+		}
+#endif
+
 		// Clear old variables
 		lines.clear();
 		lines2.clear();
@@ -319,7 +337,34 @@ int main()
 			}
 			double angle = atan2(a.y - b.y, a.x - b.x);
 			angle = degree(angle);
-			cout << angle << endl;
+
+			int angle = 0; // -1 = less than 80 degrees, 0 = between 80 to 100 degrees, 1 = more than 100 degrees
+			int placement = 0; // -1 = left third of frame, 0 = middle third of frame, 1 = right third of frame
+			
+			if (angle <= 80) angle = -1;
+			else if (angle >= 100) angle = 1;
+
+			if (b.x < cvRound(frame.cols / 3)) placement = -1;
+			else if (b.x > cvRound(2 * frame.cols / 3)) placement = 1;
+
+			if ((placement == 0 && angle == 0) || (placement == 1 && angle == -1) || (placement == -1 && angle == 1)) {
+				cout << "Go straight" << endl;
+#ifdef __arm__
+				serialPrintf(arduino, "cf");
+#endif
+			}
+			else if ((placement == -1 && angle == 0) || (placement == 0 && angle == -1) || (placement == -1 && angle == -1)) {
+				cout << "Go left" << endl;
+#ifdef __arm__
+				serialPrintf(arduino, "af");
+#endif
+			}
+			else if ((placement == 1 && angle == 0) || (placement == 0 && angle == 1) || (placement == 1 && angle == 1)) {
+				cout << "Go right" << endl;
+#ifdef __arm__
+				serialPrintf(arduino, "df");
+#endif
+			}
 		}
 
 		// Display frames
@@ -328,6 +373,13 @@ int main()
 		imshow("Combined feed and threshold", thresh);
 		imshow("Canny line detection", canny);
 		imshow("Denoised image", smoothed);
+#endif
+
+#ifdef __arm__
+		std::vector<uchar> buff;
+		imencode(".jpg", display, buff);
+		ofstream img("/home/geoffreymon/mjpg/out.jpg", ios::binary + ios::trunc);
+		img.write(reinterpret_cast<char *>(buff.data()), buff.size());
 #endif
 
 		if (waitKey(20) >= 0)
