@@ -25,13 +25,14 @@
 #include <iostream>
 #include <algorithm>
 #include <cstdio>
+#include <cstdlib>
 #include <cmath>
 #include <vector>
 #include <string>
 #include <fstream>
 
 #include <opencv2/opencv.hpp>
-#ifdef __arm__
+#ifdef __linux
 #include <wiringSerial.h>
 #endif
 
@@ -133,12 +134,14 @@ vector<Point> convertLine(Vec2f ln)
 // main() does what you think it does :P
 int main()
 {
-#ifdef __arm__
+	cout << "initializing Autoduino project..." << endl;
+#ifdef __linux
 	int arduino = serialOpen("/dev/ttyACM0", 9600);
 	if (!arduino) {
 		cerr << "can't open arduino" << endl;
 		return -1;
 	}
+	cout << "arduino opened" << endl;
 #endif
 
 	// Canny threshold
@@ -158,6 +161,7 @@ int main()
 		cerr << "can't open camera" << endl;
 		return -1;
 	}
+	cout << "camera opened" << endl;
 
 	bool run = true;
 
@@ -176,19 +180,22 @@ int main()
 
 	while (run) {
 		// Check ultrasound distance sensor first!
-#ifdef __arm__
+#ifdef __linux
 		serialPrintf(arduino, "z");
-		string l = "";
+		string input = "";
 		char c;
-		while (true) {
+		int dist;
+		while (serialDataAvail(arduino)) {
 			c = serialGetchar(arduino);
-			if (c != '\n') l += c;
+			if (c != '\n') input += c;
 			else if (c == '\n') break;
 		}
-		distance = stoi(l);
-		if (distance < 20) {
-			serialPrintf(arduino, "cs");
-			continue;
+		if(input != "") {
+		  dist = stoi(input);
+		  if (dist < 20) {
+		    serialPrintf(arduino, "cs");
+		    continue;
+		  }
 		}
 #endif
 
@@ -199,8 +206,10 @@ int main()
 
 		// Get frame
 		camera >> frame;
-		if (frame.empty())
-			continue;
+		if (frame.empty()) {
+		  cerr << "Empty frame?" << endl;
+		  continue;
+		}
 
 		// Process image
 		frame.copyTo(display);
@@ -326,8 +335,9 @@ int main()
 			centerline = points;
 			drive = true;
 		}
-
+		cout << "test" << endl;
 		if (drive) {
+			cout << "driving" << endl;
 			Point a = centerline[0];
 			Point b = centerline[1];
 			if (a.y < b.y) {
@@ -338,30 +348,30 @@ int main()
 			double angle = atan2(a.y - b.y, a.x - b.x);
 			angle = degree(angle);
 
-			int angle = 0; // -1 = less than 80 degrees, 0 = between 80 to 100 degrees, 1 = more than 100 degrees
+			int ang = 0; // -1 = less than 80 degrees, 0 = between 80 to 100 degrees, 1 = more than 100 degrees
 			int placement = 0; // -1 = left third of frame, 0 = middle third of frame, 1 = right third of frame
 			
-			if (angle <= 80) angle = -1;
-			else if (angle >= 100) angle = 1;
+			if (angle <= 80) ang = -1;
+			else if (angle >= 100) ang = 1;
 
 			if (b.x < cvRound(frame.cols / 3)) placement = -1;
 			else if (b.x > cvRound(2 * frame.cols / 3)) placement = 1;
 
-			if ((placement == 0 && angle == 0) || (placement == 1 && angle == -1) || (placement == -1 && angle == 1)) {
+			if ((placement == 0 && ang == 0) || (placement == 1 && ang == -1) || (placement == -1 && ang == 1)) {
 				cout << "Go straight" << endl;
-#ifdef __arm__
+#ifdef __linux
 				serialPrintf(arduino, "cf");
 #endif
 			}
-			else if ((placement == -1 && angle == 0) || (placement == 0 && angle == -1) || (placement == -1 && angle == -1)) {
+			else if ((placement == -1 && ang == 0) || (placement == 0 && ang == -1) || (placement == -1 && ang == -1)) {
 				cout << "Go left" << endl;
-#ifdef __arm__
+#ifdef __linux
 				serialPrintf(arduino, "af");
 #endif
 			}
-			else if ((placement == 1 && angle == 0) || (placement == 0 && angle == 1) || (placement == 1 && angle == 1)) {
+			else if ((placement == 1 && ang == 0) || (placement == 0 && ang == 1) || (placement == 1 && ang == 1)) {
 				cout << "Go right" << endl;
-#ifdef __arm__
+#ifdef __linux
 				serialPrintf(arduino, "df");
 #endif
 			}
@@ -375,19 +385,29 @@ int main()
 		imshow("Denoised image", smoothed);
 #endif
 
-#ifdef __arm__
+#ifdef __linux
+		cout << "mew" << endl;
 		std::vector<uchar> buff;
 		imencode(".jpg", display, buff);
-		ofstream img("/home/geoffreymon/mjpg/out.jpg", ios::binary + ios::trunc);
-		img.write(reinterpret_cast<char *>(buff.data()), buff.size());
+		cout << reinterpret_cast<const char*>(buff.data()) << endl;
+		ofstream img("/home/geoffreymon/mjpg/out.jpg");//, ofstream::binary);
+		//img << "Meow";
+		img.write(reinterpret_cast<const char*>(buff.data()), buff.size());
+		img.close();
 #endif
 
-		if (waitKey(20) >= 0)
+		if (waitKey(200) >= 0)
 			break;
 	}
 
+	camera.release();
+
 #ifdef _WIN32
 	destroyAllWindows();
+#endif
+
+#ifdef __linux
+	serialClose(arduino);
 #endif
 
 	return 0;
