@@ -366,13 +366,13 @@ int main()
 			else if ((placement == -1 && ang == 0) || (placement == 0 && ang == -1) || (placement == -1 && ang == -1)) {
 				cout << "Go left" << endl;
 #ifdef __linux
-				serialPrintf(arduino, "af");
+				serialPrintf(arduino, "df");
 #endif
 			}
 			else if ((placement == 1 && ang == 0) || (placement == 0 && ang == 1) || (placement == 1 && ang == 1)) {
 				cout << "Go right" << endl;
 #ifdef __linux
-				serialPrintf(arduino, "df");
+				serialPrintf(arduino, "af");
 #endif
 			}
 		}
