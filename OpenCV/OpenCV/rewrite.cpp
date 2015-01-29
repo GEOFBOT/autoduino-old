@@ -181,7 +181,7 @@ int main()
 	while (run) {
 		// Check ultrasound distance sensor first!
 #ifdef __linux
-		serialPrintf(arduino, "z");
+		serialPrintf(arduino, "csz");
 		string input = "";
 		char c;
 		int dist;
@@ -193,7 +193,6 @@ int main()
 		if(input != "") {
 		  dist = stoi(input);
 		  if (dist < 20) {
-		    serialPrintf(arduino, "cs");
 		    continue;
 		  }
 		}
@@ -396,7 +395,7 @@ int main()
 		img.close();
 #endif
 
-		if (waitKey(200) >= 0)
+		if (waitKey(2000) >= 0)
 			break;
 	}
 
