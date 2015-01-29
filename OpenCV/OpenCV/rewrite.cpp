@@ -228,7 +228,7 @@ int main()
 		//addWeighted(processed, 0.1, combined, 0.9, 0.0, combined);
 		Canny(smoothed, canny, threshold1, threshold2);
 		HoughLines(canny, lines, 1, radian(1), 90);
-		HoughLines(processed, lines_threshold, 1, radian(1), 60);
+		HoughLines(processed, lines_threshold, 1, radian(1), 75);
 		cvtColor(thresh, thresh, COLOR_GRAY2BGR);
 		cvtColor(processed, processed, COLOR_GRAY2BGR);
 
@@ -247,11 +247,11 @@ int main()
 			
 			for (int j = 0; j < it.count; ++j, ++it) {
 				if (nearRange(it.pos().y, 0, thresh.rows)
-					&& nearRange(it.pos().x - 20, 0, thresh.cols)
-					&& nearRange(it.pos().x + 20, 0, thresh.cols)) {
+					&& nearRange(it.pos().x - 15, 0, thresh.cols)
+					&& nearRange(it.pos().x + 15, 0, thresh.cols)) {
 					++total;
-					Point a = Point(it.pos().x - 20, it.pos().y);
-					Point b = Point(it.pos().x + 20, it.pos().y);
+					Point a = Point(it.pos().x - 15, it.pos().y);
+					Point b = Point(it.pos().x + 15, it.pos().y);
 					if (thresh.at<Vec3b>(a) != Vec3b(0,0,0) && thresh.at<Vec3b>(b) != Vec3b(0,0,0)) {
 						circle(thresh, it.pos(), 2, Scalar(0, 0, 255));
 						++good;
