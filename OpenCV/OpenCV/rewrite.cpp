@@ -395,7 +395,7 @@ int main()
 		img.close();
 #endif
 
-		if (waitKey(2000) >= 0)
+		if (waitKey(750) >= 0)
 			break;
 	}
 
