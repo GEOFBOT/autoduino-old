@@ -1,3 +1,9 @@
+##DEPRECATED
+Replaced by [autoduinoROS](https://github.com/geofbot/autoduinoROS)
+
+
+Autoduino Project
+=================
 Dependencies:
 - FANN
 - wiringPi

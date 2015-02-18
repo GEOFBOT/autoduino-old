@@ -211,9 +211,9 @@ int main()
 		}
 
 		// Process image
-		frame = frame(Rect(0, cvRound(0.5*frame.rows), frame.cols, cvRound(0.5*frame.rows)));
+		frame = frame(Rect(0, cvRound(0.6*frame.rows), frame.cols, cvRound(0.4*frame.rows)));
 		frame.copyTo(display);
-		bilateralFilter(frame, smoothed, 9, 75, 75);
+		bilateralFilter(frame, smoothed, 9, 18, 4.5);
 		cvtColor(smoothed, smoothed, COLOR_BGR2GRAY);
 		//equalizeHist(smoothed, contrast);
 		smoothed.copyTo(contrast);
