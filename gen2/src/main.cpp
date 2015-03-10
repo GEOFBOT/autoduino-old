@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 	namedWindow("Canny");
 #endif
 
-#ifdef __linuxca
+#ifdef __linux
 	VideoCapture cam(0);
 	cam.set(CV_CAP_PROP_FRAME_WIDTH, 1920);
 	cam.set(CV_CAP_PROP_FRAME_HEIGHT, 1080);
@@ -167,7 +167,7 @@ int main(int argc, char* argv[])
 		for (int sec1 = sections.size() - 1; sec1 > 0; --sec1) {
 			// for each of the lines in that section...
 			for (int l1 = 0; l1 < roadlines[sec1].size(); ++l1) {
-				line(display, roadlines[sec1][l1].line[0], roadlines[sec1][l1].line[1], Scalar(0, 0, 0), 2, LINE_AA);
+				//line(display, roadlines[sec1][l1].line[0], roadlines[sec1][l1].line[1], Scalar(0, 0, 0), 2, LINE_AA);
 
 				vector< vector<Point> > group_of_lines;
 
