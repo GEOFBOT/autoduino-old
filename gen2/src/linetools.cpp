@@ -29,7 +29,7 @@ bool sortLineByScore(const roadline &a, const roadline &b)
 // order to find the largest ones.
 bool pointVectorSort(const std::vector<cv::Point> &a, const std::vector<cv::Point> &b)
 {
-	return a.size() < b.size();
+	return a.size() > b.size();
 }
 
 // Degrees -> radians

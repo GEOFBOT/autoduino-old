@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
 		/////////////
 		// Variables
 		/////////////
-		Mat sobel, sobel2, sobel_canny, display;
+		Mat sobel, sobel_pre, sobel2, sobel_canny, display;
 		vector<Mat> sections;
 		vector<Mat> sections_disp;
 		vector< vector<roadline> > roadlines;
@@ -117,7 +117,8 @@ int main(int argc, char* argv[])
 		GaussianBlur(img, img, Size(3, 3), 0);
 		Sobel(img, sobel, CV_16S, 1, 0, 3);
 		convertScaleAbs(sobel, sobel2);
-		threshold(sobel2, sobel2, 100, 255, THRESH_BINARY_INV);
+		sobel2.copyTo(sobel_pre);
+		threshold(sobel2, sobel2, 60, 255, THRESH_BINARY_INV);
 
 		Mat element = getStructuringElement(MORPH_ELLIPSE, Size(7, 7), Point(3, 3));
 		erode(sobel2, sobel2, element);
@@ -146,6 +147,10 @@ int main(int argc, char* argv[])
 				vector<Vec2f> lines;
 				HoughLines(sections[i - 1], lines, 1, radian(1), 25);
 
+				for (int j = 0; j < lines.size(); ++j) {
+					displayLine(lines[j], sections_disp[i-1], Scalar(255, 255, 255), 2);
+				}
+
 				roadlines.push_back(groupLines(lines, img.cols / 8, sections[i - 1]));
 
 				offset += height / 2;
@@ -163,7 +168,7 @@ int main(int argc, char* argv[])
 		for (int sec1 = sections.size() - 1; sec1 > 0; --sec1) {
 			// for each of the lines in that section...
 			for (int l1 = 0; l1 < roadlines[sec1].size(); ++l1) {
-				//line(display, roadlines[sec1][l1].line[0], roadlines[sec1][l1].line[1], Scalar(0, 0, 0));
+				line(display, roadlines[sec1][l1].line[0], roadlines[sec1][l1].line[1], Scalar(0, 0, 0), 2, LINE_AA);
 
 				vector< vector<Point> > group_of_lines;
 
@@ -271,6 +276,11 @@ int main(int argc, char* argv[])
 			vector< vector<Point> > temporary_vector_with_unnecessarily_long_name_for_storing_longest_polylines;
 
 			sort(road_polylines.begin(), road_polylines.end(), pointVectorSort);
+			cout << "Test: ";
+			for (int z = 0; z < road_polylines.size(); ++z) {
+				cout << road_polylines[z].size() << ' ';
+			}
+			cout << endl;
 
 			temporary_vector_with_unnecessarily_long_name_for_storing_longest_polylines.push_back(road_polylines[0]);
 			temporary_vector_with_unnecessarily_long_name_for_storing_longest_polylines.push_back(road_polylines[1]);
@@ -331,6 +341,7 @@ int main(int argc, char* argv[])
 
 #ifdef _WIN32
 		imshow("Camera", display);
+		imshow("Sobel pre-thresh", sobel_pre);
 		imshow("Sobel", sobel2);
 		imshow("Canny", sobel_canny);
 #endif
