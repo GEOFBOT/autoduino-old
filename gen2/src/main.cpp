@@ -48,6 +48,7 @@ int main(int argc, char* argv[])
 {
 #ifdef _WIN32
 	namedWindow("Camera");
+	namedWindow("Sobel pre-thresh");
 	namedWindow("Sobel");
 	namedWindow("Canny");
 #endif
@@ -136,9 +137,8 @@ int main(int argc, char* argv[])
 		// See http://www1.i2r.a-star.edu.sg/~ywang/CHEVP.htm
 		///////////////////////////////////////////////////////
 		{
-			int i = 1;
 			double height = 0.10, offset = 0;
-			while (i <= 10) {
+			for (int i = 1; i <= 10; ++i) {
 				sections_disp.push_back(display(Rect(0, offset * sobel2.rows, sobel2.cols, height / 2 * sobel2.rows)));
 				sections.push_back(sobel_canny(Rect(0, offset * sobel2.rows, sobel2.cols, height / 2 * sobel2.rows)));
 
@@ -155,7 +155,6 @@ int main(int argc, char* argv[])
 
 				offset += height / 2;
 				height += i % 2 ? 0 : 0.05;
-				++i;
 			}
 		}
 
@@ -348,6 +347,8 @@ int main(int argc, char* argv[])
 
 #ifdef __linux
 		vid.write(display);
+		imwrite("test-sobelt.jpg", sobel2);
+		imwrite("test-sobelp.jpg", sobel_pre);
 #endif
 	}
 
