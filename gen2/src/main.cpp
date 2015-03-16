@@ -32,18 +32,9 @@ using namespace cv;
 
 int arduino = -1;
 
-//////////////////////////////////////////
-// Function that does all the work
-// It's separate so it will work with ROS
-//////////////////////////////////////////
-void processImage(Mat img)
-{
-	
-}
-
-//////////////////////////////////////////////
-// Main function that launches processImage()
-//////////////////////////////////////////////
+/////////////////
+// Main function
+/////////////////
 int main(int argc, char* argv[])
 {
 #ifdef _WIN32
@@ -55,8 +46,8 @@ int main(int argc, char* argv[])
 
 #ifdef __linux
 	VideoCapture cam(0);
-	cam.set(CV_CAP_PROP_FRAME_WIDTH, 1920);
-	cam.set(CV_CAP_PROP_FRAME_HEIGHT, 1080);
+	cam.set(CV_CAP_PROP_FRAME_WIDTH, 640);
+	cam.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
 	arduino = serialOpen("/dev/ttyACM0", 9600);
 	if (!arduino) {
 		cerr << "Can't open Arduino -_- (fix your hardware!)" << endl;
@@ -303,22 +294,32 @@ int main(int argc, char* argv[])
 			polylines(display, center_polyline, false, Scalar(128, 255, 128), 3);
 
 			if (center_polyline.size() >= 2) {
+			  int lowy =0;
+			  Point top;
+			  for(int z =0; z<center_polyline.size();++z) {
+			    if(center_polyline[z].y > lowy && center_polyline[z].y != img.rows){
+			      cout << lowy << ' ' << center_polyline[z].y << endl;
+			      lowy =center_polyline[z].y;
+			      top = center_polyline[z];
+			    }
+			  }
 
-				Point bottom = center_polyline[0], top = center_polyline[center_polyline.size() - 1];
-				if (bottom.y < top.y) {
-					Point temp = bottom;
-					bottom = top;
-					top = temp;
-				}
-
-				bottom = Point(img.cols / 2, img.rows);
-
-				int location = 0, tilt = 0;
+//Point bottom = center_polyline[0], top = 
+//				if (bottom.y < top.y) {
+//					Point temp = bottom;
+//					bottom = top;
+//					top = temp;
+//				}
+//				top = bottom;
+				Point bottom = Point(img.cols / 2, img.rows);
+				circle(display, top, 10, Scalar(0,0,0), -1);
+				circle(display, bottom, 10, Scalar(255,255,255), -1);
+				//				int location = 0, tilt = 0;
 				int angle = int(round(degree(atan2(bottom.y - top.y, bottom.x - top.x))));
 
 				// Angles go in opposite directions in image and on servo
 				// also, the line in the image is kind of skewed so reduce the angle
-				angle = 90 - (angle - 90) * 0.75;
+				angle = 90 - (angle - 90) * 1;
 
 #ifdef __linux
 				if (angle <= 110 && angle >= 70) serialPrintf(arduino, "a%if", angle);
@@ -347,6 +348,7 @@ int main(int argc, char* argv[])
 
 #ifdef __linux
 		vid.write(display);
+		imwrite("test-display.jpg", display);
 		imwrite("test-sobelt.jpg", sobel2);
 		imwrite("test-sobelp.jpg", sobel_pre);
 #endif
