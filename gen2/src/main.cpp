@@ -46,8 +46,8 @@ int main(int argc, char* argv[])
 
 #ifdef __linux
 	VideoCapture cam(0);
-	cam.set(CV_CAP_PROP_FRAME_WIDTH, 640);
-	cam.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
+	cam.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+	cam.set(CV_CAP_PROP_FRAME_HEIGHT, 720);
 	arduino = serialOpen("/dev/ttyACM0", 9600);
 	if (!arduino) {
 		cerr << "Can't open Arduino -_- (fix your hardware!)" << endl;
@@ -63,16 +63,29 @@ int main(int argc, char* argv[])
 	}
 #endif
 
+	bool oneTime = false;
+	std::cout << "Cmd args: ";
+	for(int i = 0; i < argc; ++i) {
+	  std::cout << argv[i] << ' ';
+	}
+	std::cout << std::endl;
+
+	if(argc == 2) {
+	  oneTime = true;
+	  std::cout << "Onetime" << std::endl;
+	}
+
 	while (true) {
 		/////////////////////////////
 		// Get camera frame
 		// but flush the problematic
 		// buffer first :P
 		/////////////////////////////
-		Mat img;
+	  Mat origImg, img;
 #ifdef __linux
 		cam.grab(); cam.grab(); cam.grab(); cam.grab(); cam.grab();
-		cam >> img;
+		cam >> origImg;
+		img = origImg(Rect(0, 0, origImg.cols-2, origImg.rows));
 #endif
 #ifdef _WIN32
 		img = imread("test.jpg");
@@ -92,7 +105,7 @@ int main(int argc, char* argv[])
 		/////////////
 		// Variables
 		/////////////
-		Mat sobel, sobel_pre, sobel2, sobel_canny, display;
+		Mat sobel, sobel_pre, sobel_pre_disp, sobel2, sobel_canny, display, display_lines, hough_disp;
 		vector<Mat> sections;
 		vector<Mat> sections_disp;
 		vector< vector<roadline> > roadlines;
@@ -100,6 +113,8 @@ int main(int argc, char* argv[])
 		vector< vector<Point> > road_polylines;
 
 		img.copyTo(display);
+		display.copyTo(hough_disp);
+		hough_disp.copyTo(display_lines);
 		cvtColor(img, img, COLOR_BGR2GRAY);
 
 		////////////////////////////////
@@ -110,7 +125,7 @@ int main(int argc, char* argv[])
 		Sobel(img, sobel, CV_16S, 1, 0, 3);
 		convertScaleAbs(sobel, sobel2);
 		sobel2.copyTo(sobel_pre);
-		threshold(sobel2, sobel2, 60, 255, THRESH_BINARY_INV);
+		threshold(sobel2, sobel2, 40, 255, THRESH_BINARY_INV);
 
 		Mat element = getStructuringElement(MORPH_ELLIPSE, Size(7, 7), Point(3, 3));
 		erode(sobel2, sobel2, element);
@@ -130,10 +145,8 @@ int main(int argc, char* argv[])
 		{
 			double height = 0.10, offset = 0;
 			for (int i = 1; i <= 10; ++i) {
-				sections_disp.push_back(display(Rect(0, offset * sobel2.rows, sobel2.cols, height / 2 * sobel2.rows)));
+				sections_disp.push_back(hough_disp(Rect(0, offset * sobel2.rows, sobel2.cols, height / 2 * sobel2.rows)));
 				sections.push_back(sobel_canny(Rect(0, offset * sobel2.rows, sobel2.cols, height / 2 * sobel2.rows)));
-
-				line(display, Point(0, (offset + height / 2)*img.rows), Point(img.cols, (offset + height / 2)*img.rows), Scalar(255, 0, 0));
 
 				vector<Vec2f> lines;
 				HoughLines(sections[i - 1], lines, 1, radian(1), 25);
@@ -142,7 +155,7 @@ int main(int argc, char* argv[])
 					displayLine(lines[j], sections_disp[i-1], Scalar(255, 255, 255), 2);
 				}
 
-				roadlines.push_back(groupLines(lines, img.cols / 8, sections[i - 1]));
+				roadlines.push_back(groupLines(lines, img.cols / 10, sections[i - 1]));
 
 				offset += height / 2;
 				height += i % 2 ? 0 : 0.05;
@@ -214,8 +227,8 @@ int main(int argc, char* argv[])
 							converted_line[0] = temp;
 						}
 
-						circle(display, converted_line[0], 3, Scalar(255, 255, 0), 2);
-						circle(display, converted_line[1], 3, Scalar(0, 255, 255), 2);
+						circle(display_lines, converted_line[0], 3, Scalar(255, 255, 0), 2);
+						circle(display_lines, converted_line[1], 3, Scalar(0, 255, 255), 2);
 
 						group_of_lines.push_back(converted_line);
 						roadlines[sec2].erase(line_index);
@@ -237,22 +250,22 @@ int main(int argc, char* argv[])
 			for (int j = 0; j < grouped_lines[i].size(); ++j) {
 				if (j == 0) { // First point is the bottom point of the first line segment
 					points.push_back(grouped_lines[i][j][0]);
-					circle(display, points[points.size() - 1], 8, Scalar(0, 0, 0), 3);
+					circle(display_lines, points[points.size() - 1], 8, Scalar(0, 0, 0), 3);
 				}
 				if (j == grouped_lines[i].size() - 1) { // Last point is the top point of the last line segment
 					points.push_back(grouped_lines[i][j][1]);
-					circle(display, points[points.size() - 1], 8, Scalar(0, 0, 0), 3);
+					circle(display_lines, points[points.size() - 1], 8, Scalar(0, 0, 0), 3);
 				}
 				else { // Middle points are averages of the two nearby points
 					points.push_back(averagePoints({ grouped_lines[i][j][1], grouped_lines[i][j + 1][0] }));
-					circle(display, grouped_lines[i][j][1], 8, Scalar(0, 255, 0), 3);
-					circle(display, grouped_lines[i][j + 1][0], 8, Scalar(0, 0, 255), 3);
+					circle(display_lines, grouped_lines[i][j][1], 8, Scalar(0, 255, 0), 3);
+					circle(display_lines, grouped_lines[i][j + 1][0], 8, Scalar(0, 0, 255), 3);
 				}
 			}
 
 			if (points.size() > 2) {
 				// Display the finished polyline! (this algorithm took a while for a noob like me)
-				polylines(display, points, false, Scalar(0, 0, 0), 3);
+				polylines(display_lines, points, false, Scalar(0, 0, 0), 3);
 				road_polylines.push_back(points);
 			}
 		}
@@ -261,6 +274,8 @@ int main(int argc, char* argv[])
 		// Loop through road_polylines and get the two biggest lines, which should hopefully be our road lines
 		// TODO: Get the two lines on the first frame and track those lines until we lose them
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
+		vector<Point> center_polyline;
+		bool continue1 = true;
 		if (road_polylines.size() >= 2) {
 			cout << road_polylines.size() << endl;
 			vector< vector<Point> > temporary_vector_with_unnecessarily_long_name_for_storing_longest_polylines;
@@ -280,8 +295,6 @@ int main(int argc, char* argv[])
 			polylines(display, road_polylines[1], false, Scalar(255, 0, 0), 3);
 			cout << road_polylines[0].size() << ' ' << road_polylines[1].size() << endl;
 
-			vector<Point> center_polyline;
-
 			for (int i = 0; i < road_polylines[0].size(); ++i) {
 				for (int j = 0; j < road_polylines[1].size(); ++j) {
 					if (road_polylines[0][i].y == road_polylines[1][j].y) {
@@ -292,17 +305,31 @@ int main(int argc, char* argv[])
 			}
 
 			polylines(display, center_polyline, false, Scalar(128, 255, 128), 3);
-
+		} else if (road_polylines.size() == 1) {
+		  center_polyline = road_polylines[0];
+		} else {
+		  continue1 =false;
+		}
+		
+		if(continue1) {
+		  bool continue2 = true;
+			Point top, bottom;
 			if (center_polyline.size() >= 2) {
 			  int lowy =0;
-			  Point top;
-			  for(int z =0; z<center_polyline.size();++z) {
+			  top = center_polyline[(int)floor((double)center_polyline.size()/2)];
+			} else if (center_polyline.size() == 0 || road_polylines.size() == 1) {
+			  top = road_polylines[0][(int)floor((double)road_polylines[0].size()/2)];
+			} else {
+			  std::cout << "Meh" << std::endl;
+			  continue2 = false;
+			}
+			  /*for(int z =0; z<center_polyline.size();++z) {
 			    if(center_polyline[z].y > lowy && center_polyline[z].y != img.rows){
 			      cout << lowy << ' ' << center_polyline[z].y << endl;
 			      lowy =center_polyline[z].y;
 			      top = center_polyline[z];
 			    }
-			  }
+			    }*/
 
 //Point bottom = center_polyline[0], top = 
 //				if (bottom.y < top.y) {
@@ -311,7 +338,9 @@ int main(int argc, char* argv[])
 //					top = temp;
 //				}
 //				top = bottom;
-				Point bottom = Point(img.cols / 2, img.rows);
+			if(continue2) {
+				bottom = Point(img.cols / 2, img.rows);
+				line(display, top, bottom, Scalar(255, 0, 255), 3, 16);
 				circle(display, top, 10, Scalar(0,0,0), -1);
 				circle(display, bottom, 10, Scalar(255,255,255), -1);
 				//				int location = 0, tilt = 0;
@@ -319,7 +348,7 @@ int main(int argc, char* argv[])
 
 				// Angles go in opposite directions in image and on servo
 				// also, the line in the image is kind of skewed so reduce the angle
-				angle = 90 - (angle - 90) * 1;
+				angle = 90 - (angle - 90) * 0.8;
 
 #ifdef __linux
 				if (angle <= 110 && angle >= 70) serialPrintf(arduino, "a%if", angle);
@@ -331,7 +360,7 @@ int main(int argc, char* argv[])
 			}
 		}
 
-		if (waitKey(750) >= 0) {
+		if (waitKey(500) >= 0) {
 			break;
 		}
 
@@ -347,11 +376,35 @@ int main(int argc, char* argv[])
 #endif
 
 #ifdef __linux
+		// Draw dividing lines on the images
+		{
+		  cvtColor(sobel2,sobel2,COLOR_GRAY2BGR);
+		  cvtColor(sobel_pre,sobel_pre_disp,COLOR_GRAY2BGR);
+
+			double height = 0.10, offset = 0;
+			for (int i = 1; i <= 10; ++i) {
+				line(display, Point(0, (offset + height / 2)*img.rows), Point(img.cols, (offset + height / 2)*img.rows), Scalar(255, 0, 0));
+				line(display_lines, Point(0, (offset + height / 2)*img.rows), Point(img.cols, (offset + height / 2)*img.rows), Scalar(255, 0, 0));
+				line(hough_disp, Point(0, (offset + height / 2)*img.rows), Point(img.cols, (offset + height / 2)*img.rows), Scalar(255, 0, 0));
+				line(sobel2, Point(0, (offset + height / 2)*img.rows), Point(img.cols, (offset + height / 2)*img.rows), Scalar(255, 0, 0));
+				line(sobel_pre_disp, Point(0, (offset + height / 2)*img.rows), Point(img.cols, (offset + height / 2)*img.rows), Scalar(255, 0, 0));
+
+				offset += height / 2;
+				height += i % 2 ? 0 : 0.05;
+
+			}
+		}
+
+
 		vid.write(display);
 		imwrite("test-display.jpg", display);
+		imwrite("test-display-lines.jpg", display_lines);
+		imwrite("test-hough.jpg", hough_disp);
 		imwrite("test-sobelt.jpg", sobel2);
-		imwrite("test-sobelp.jpg", sobel_pre);
+		imwrite("test-sobelp.jpg", sobel_pre_disp);
 #endif
+
+		if(oneTime) break;
 	}
 
 	//////////////////////
