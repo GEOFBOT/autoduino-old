@@ -3,15 +3,15 @@
  * Distributed under the MIT License.
  * (c) 2015 Geoffrey Mon
  * https://github.com/GEOFBOT/
- * https://github.com/GEOFBOT/autoduinoROS
+ * https://github.com/GEOFBOT/autoduino-old
  *
  * Main program
  *
  *******************************************************************************
- * NOTE: When run on Windows (_WIN32 defined), the program uses a webcam and   *
- * displays the images for testing.  When run on Linux (__linux defined), the  *
- * program reads off an ROS image topic and is in production mode, rather than *
- * testing mode.                                                               *
+ * NOTE: When run on Windows (_WIN32 defined), the program uses a saved file   *
+ * and displays output for testing.  When run on Linux (__linux defined), the  *
+ * program reads output of a camera module and sends serial commands, instead  *
+ * of testing.                                                                 *
  *******************************************************************************
  *
  */
@@ -376,7 +376,7 @@ int main(int argc, char* argv[])
 #endif
 
 #ifdef __linux
-		// Draw dividing lines on the images
+		// Draw dividing lines on the images that are saved
 		{
 		  cvtColor(sobel2,sobel2,COLOR_GRAY2BGR);
 		  cvtColor(sobel_pre,sobel_pre_disp,COLOR_GRAY2BGR);
