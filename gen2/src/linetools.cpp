@@ -3,7 +3,7 @@
  * Distributed under the MIT License.
  * (c) 2015 Geoffrey Mon
  * https://github.com/GEOFBOT/
- * https://github.com/GEOFBOT/autoduinoROS
+ * https://github.com/GEOFBOT/autoduino-old
  *
  * Line Tools
  * Utilities for processing lines and points
